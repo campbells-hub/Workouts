@@ -108,11 +108,11 @@ button,a{font-family:'Barlow',sans-serif}
 .curr-top{position:relative;background:#F8F9FA;border-bottom:1px solid #EBEBEB;padding:12px 14px 10px;min-height:60px;display:flex;align-items:flex-start}
 .curr-top-icon{display:none}
 .curr-info-text{font-size:14px;line-height:1.65;color:#444;flex:1}
-.phase-pill{position:absolute;top:10px;right:48px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;padding:3px 10px;border-radius:4px;text-transform:uppercase}
-.work-pill{background:#111;color:#fff}
-.rest-pill{background:#D97706;color:#fff}
-.cool-pill{background:#1D6FBF;color:#fff}
-.set-pill{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.08);color:#333;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;padding:3px 10px;border-radius:4px}
+.phase-pill{display:none}
+
+
+
+.set-pill{display:none}
 .curr-body{padding:12px 14px 10px}
 .curr-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;line-height:1.1;color:#111}
 .curr-note{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:#555;margin-top:4px}
@@ -127,6 +127,8 @@ button,a{font-family:'Barlow',sans-serif}
 .ring-time-lbl{font-size:11px;color:#999;margin-top:2px;display:block;text-transform:uppercase;letter-spacing:1px}
 
 /* Next strip */
+.set-progress{display:none;text-align:center;margin:-4px 0 8px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;color:#111;letter-spacing:1px}
+.set-progress span{color:#D97706}
 .next-strip{display:flex;align-items:center;gap:10px;background:#F8F8F8;border:1px solid #EBEBEB;border-radius:10px;padding:10px 13px;margin-bottom:10px}
 .next-icon{width:42px;height:42px;border-radius:6px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .next-lbl{font-size:12px;color:#AAA;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
@@ -243,6 +245,7 @@ button,a{font-family:'Barlow',sans-serif}
         <small class="ring-time-lbl" id="ring-lbl">ready</small>
       </div>
     </div>
+    <div class="set-progress" id="set-progress">SET <span id="set-progress-text">1 of 1</span></div>
 
     <div class="next-strip">
       <div class="next-icon" id="next-icon">→</div>
@@ -2244,6 +2247,7 @@ function startCooldown() {
   document.getElementById('phase-pill').textContent = 'COOL DOWN';
   document.getElementById('phase-pill').className = 'phase-pill cool-pill';
   document.getElementById('set-pill').style.display = 'none';
+  document.getElementById('set-progress').style.display = 'none';
   document.getElementById('ring-fill').setAttribute('stroke','#1D6FBF');
   document.getElementById('next-nm').textContent = 'Workout Complete 🏆';
   document.getElementById('next-icon').textContent = '🏆';
@@ -2348,10 +2352,13 @@ function updateCurrentUI(ex) {
     document.getElementById('curr-info-text').textContent = ex.info || 'Focus on controlled movement and proper form throughout.';
     document.getElementById('ring-fill').setAttribute('stroke','#111');
     document.getElementById('ring-lbl').textContent = 'seconds';
-    if (currentWorkout.type === 'sets' && ex.sets > 1) {
-      setPill.style.display = 'block';
-      setPill.textContent = `Set ${setNum} / ${ex.sets}`;
-    } else { setPill.style.display = 'none'; }
+    setPill.style.display = 'none'; // pill hidden, using set-progress instead
+    const sp = document.getElementById('set-progress');
+    const spt = document.getElementById('set-progress-text');
+    if (currentWorkout.type === 'sets' && !ex.isRest && ex.sets > 1) {
+      sp.style.display = 'block';
+      spt.textContent = `${setNum} of ${ex.sets}`;
+    } else { sp.style.display = 'none'; }
   }
   updateNextStrip();
   updateRoundBadge();
@@ -2368,9 +2375,14 @@ function updateRestUI(noteText) {
   document.getElementById('curr-name').textContent = 'Rest';
   document.getElementById('curr-note').textContent = noteText || '';
   const ex = currentWorkout.exercises[exIdx];
-  const sp = document.getElementById('set-pill');
-  if (ex && ex.sets > 1) { sp.style.display='block'; sp.textContent=`Set ${setNum} / ${ex.sets}`; }
-  else { sp.style.display='none'; }
+  document.getElementById('set-pill').style.display = 'none';
+  document.getElementById('set-progress').style.display = 'none';
+  const spd = document.getElementById('set-progress');
+  const spt2 = document.getElementById('set-progress-text');
+  if (ex && ex.sets > 1) {
+    spd.style.display = 'block';
+    spt2.textContent = `${setNum} of ${ex.sets}`;
+  } else { spd.style.display = 'none'; }
   document.getElementById('next-nm').textContent = `Set ${setNum+1} of ${ex ? ex.sets : '?'} — ${ex ? ex.name : ''}`;
   document.getElementById('next-icon').textContent = '💪';
 }
