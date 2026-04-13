@@ -105,9 +105,10 @@ button,a{font-family:'Barlow',sans-serif}
 /* Current exercise card */
 .curr-card{background:#fff;border:2px solid #111;border-radius:14px;overflow:hidden;margin-bottom:12px}
 .curr-card.rest-card{border-color:#D97706}
-.curr-top{position:relative;height:120px;background:#F5F5F5;display:flex;align-items:center;justify-content:center}
-.curr-top-icon{font-size:52px}
-.phase-pill{position:absolute;top:10px;left:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;padding:3px 10px;border-radius:4px;text-transform:uppercase}
+.curr-top{position:relative;background:#F8F9FA;border-bottom:1px solid #EBEBEB;padding:12px 14px 10px;min-height:60px;display:flex;align-items:flex-start}
+.curr-top-icon{display:none}
+.curr-info-text{font-size:14px;line-height:1.65;color:#444;flex:1}
+.phase-pill{position:absolute;top:10px;right:48px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;padding:3px 10px;border-radius:4px;text-transform:uppercase}
 .work-pill{background:#111;color:#fff}
 .rest-pill{background:#D97706;color:#fff}
 .cool-pill{background:#1D6FBF;color:#fff}
@@ -221,7 +222,7 @@ button,a{font-family:'Barlow',sans-serif}
   <div id="timer-panel" class="timer-panel">
     <div class="curr-card" id="curr-card">
       <div class="curr-top" id="curr-top">
-        <div class="curr-top-icon" id="curr-icon">💪</div>
+        <div class="curr-info-text" id="curr-info-text">—</div>
         <div class="phase-pill work-pill" id="phase-pill">WORK</div>
         <div class="set-pill" id="set-pill" style="display:none"></div>
       </div>
@@ -256,7 +257,7 @@ button,a{font-family:'Barlow',sans-serif}
       <button class="cbtn cbtn-primary" onclick="userNext()">Next ▶</button>
       <button class="cbtn cbtn-gold" onclick="skipRest()">⏭ Skip Rest</button>
       <button class="cbtn cbtn-danger" onclick="resetTimer()">↺ Reset</button>
-      <button class="cbtn cbtn-full cbtn-gold" onclick="showInfo()">ⓘ Exercise Info</button>
+
     </div>
   </div>
 
@@ -319,7 +320,7 @@ const ALL_WORKOUTS = [
         "note": "60 seconds",
         "duration": 60,
         "isRest": false,
-        "info": "Pedal at steady high intensity. Drive with both arms and legs. Keep core tight throughout."
+        "info": "Sit tall with slight forward lean. Drive with both arms AND legs simultaneously. Aim for a consistent pace and avoid going all-out in round 1. RPM over 60 is solid work."
       },
       {
         "name": "Rest",
@@ -332,7 +333,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on back. Bring opposite elbow to opposite knee in a cycling motion. Keep lower back pressed to mat."
+        "info": "Lie flat, hands lightly behind head. Bring right elbow to left knee while extending the right leg, then alternate. Keep lower back pressed into mat. Move with control, not speed."
       },
       {
         "name": "Rest",
@@ -345,7 +346,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on side. Crunch upward bringing elbow toward hip. Control movement \u2014 avoid pulling on neck."
+        "info": "Lie on your side, body in a straight line. Crunch sideways lifting torso toward raised hip. Squeeze the oblique at the top. Controlled return."
       },
       {
         "name": "Rest",
@@ -358,7 +359,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Sit with knees bent. Hold dumbbell with both hands. Rotate torso side to side. Keep core braced."
+        "info": "Sit with knees bent, feet flat or elevated. Hold dumbbell with both hands. Rotate torso fully left then right, touching weight toward floor each side. Keep chest tall throughout."
       },
       {
         "name": "Rest",
@@ -371,7 +372,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on back with legs straight. Raise legs to 90\u00b0 then lower slowly without touching floor. Press lower back down."
+        "info": "Lie on back, arms at sides. Raise both legs to 90 degrees then lower slowly, stopping before heels touch the floor. Press lower back flat throughout. Never let the back arch."
       },
       {
         "name": "Rest",
@@ -384,7 +385,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds \u2014 hold position",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on back. Press lower back flat to mat. Raise bent knees and extend arms overhead. Hold hollow position. Breathe steadily."
+        "info": "Press lower back firmly into mat. Raise bent knees to 90 degrees and extend arms overhead by ears. Hold this dish shape. If lower back lifts, bring knees closer. Breathe steadily."
       },
       {
         "name": "Rest",
@@ -413,7 +414,7 @@ const ALL_WORKOUTS = [
         "note": "30 lbs \u00d7 100 yards",
         "duration": 60,
         "isRest": false,
-        "info": "Load sled with 30 lbs. Drive forward in athletic stance, pushing from hips and legs. Keep back flat and core tight."
+        "info": "Lean into the sled at roughly 45 degrees. Drive powerfully with alternating legs using short quick powerful steps. Keep back flat and core braced. Arms stay straight pushing through the handles."
       },
       {
         "name": "Rest",
@@ -426,7 +427,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 30-40 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Hold slam ball. Squat down, drive through hips and throw ball up and over one shoulder. Alternate shoulders."
+        "info": "Stand with feet shoulder-width. Hinge to pick up ball, drive through hips explosively throwing ball up and over one shoulder. Alternate shoulders each rep. 30-40 lbs."
       },
       {
         "name": "Rest",
@@ -439,7 +440,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 15-20 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Hold dumbbells. Step up onto box leading with one foot. Drive through heel. Alternate legs. Keep torso upright."
+        "info": "Hold dumbbells at sides. Plant full foot on box and drive through that heel to step up. Bring trailing leg up to stand tall at top. Step down with control. Alternate legs. 15-20 lbs each."
       },
       {
         "name": "Rest",
@@ -452,7 +453,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 15-20 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Lie on bench/step. Press dumbbells from chest to full extension. Control descent. 15-20 lbs each hand."
+        "info": "Lie on bench with feet flat on floor. Start with dumbbells at chest level, elbows at 45 degrees. Press to full extension. Lower slowly with control. 15-20 lbs each hand."
       },
       {
         "name": "Rest",
@@ -465,7 +466,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 knee tucks",
         "duration": 60,
         "isRest": false,
-        "info": "Kneel on ab dolly. Roll forward extending arms while keeping core braced. Pull back tucking knees. Do not let hips sag."
+        "info": "Kneel behind dolly, hands on handles. Brace core hard. Roll forward slowly letting arms extend overhead. Pull back by engaging abs. Do not let hips sag at any point."
       },
       {
         "name": "Rest",
@@ -493,7 +494,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Grab handles of ski erg. Drive arms down and back in a powerful sweeping motion. Hinge at hips. Maintain steady rhythm."
+        "info": "Stand facing the ski erg, feet hip-width. Grip handles overhead. Sweep arms powerfully down and back while hinging at hips. Let arms float back up. Focus on rhythm and power."
       },
       {
         "name": "Rest",
@@ -506,7 +507,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 20-30 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Stand with kettlebell at side. Hinge at hips keeping back straight. Lift by driving through heels. Keep shoulder packed."
+        "info": "Kettlebell at one side like a suitcase. Hinge at hips keeping spine neutral and resist the urge to lean toward the weight. Drive through both heels to stand. Brace core hard. 20-30 lbs."
       },
       {
         "name": "Rest",
@@ -519,7 +520,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 15-20 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Place two kettlebells between feet. Hinge forward. Row one while other stays on floor. Alternate sides. Keep hips level."
+        "info": "Two kettlebells between feet, hinge forward to about 45 degrees. Row one KB to hip while the other rests on floor. Alternate smoothly. Keep hips square throughout. 15-20 lbs each."
       },
       {
         "name": "Rest",
@@ -532,7 +533,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 20 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Hold kettlebell with both hands. Squat to depth, chest up. As you stand, perform upright row raising to chin. 20 lbs."
+        "info": "Hold KB with both hands goblet style. Squat deep keeping chest up. Drive through heels to stand, then pull KB straight up to chin leading with elbows. Lower with control. 20 lbs."
       },
       {
         "name": "Rest",
@@ -545,7 +546,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "On hands and knees. Extend opposite arm and leg simultaneously. Hold briefly at top. Maintain neutral spine. Alternate sides."
+        "info": "On all fours, wrists under shoulders, knees under hips. Simultaneously extend left arm and right leg until both are parallel to floor. Hold 2 seconds. Return with control. Alternate. Keep hips perfectly level."
       },
       {
         "name": "Rest",
@@ -575,7 +576,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Drive with legs first, then lean back, then pull handles to lower chest. Return in reverse. Maintain steady rhythm."
+        "info": "Sequence: Legs, then Back, then Arms on the drive. Arms, Back, Legs on the return. Start each stroke by pushing with legs first. Lean back slightly at finish. Long powerful strokes rather than fast choppy ones."
       },
       {
         "name": "Rest",
@@ -588,7 +589,7 @@ const ALL_WORKOUTS = [
         "note": "20-30 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Hinge at hips \u2014 NOT a squat. Drive hips forward explosively to swing kettlebell to shoulder height. Let it fall back between legs."
+        "info": "This is a hip hinge, not a squat. Push hips back and let KB swing between legs. Explosively drive hips forward squeezing glutes hard at top. Let the hip drive swing the KB, not your arms. 20-30 lbs."
       },
       {
         "name": "Rest",
@@ -601,7 +602,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 red band",
         "duration": 60,
         "isRest": false,
-        "info": "Hold resistance band at shoulder width with straight arms. Pull band apart until arms fully extended to sides. Squeeze shoulder blades."
+        "info": "Hold band at shoulder height, hands shoulder-width. Arms straight. Pull band apart until arms are fully extended to sides. Squeeze shoulder blades together at end range. Slow controlled return. Red band."
       },
       {
         "name": "Rest",
@@ -614,7 +615,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Lie on back. Place feet on bench or step. Drive hips up squeezing glutes. Hold briefly at top. Lower with control."
+        "info": "Upper back on mat, feet on bench. Drive hips up by squeezing glutes, not by pushing with lower back. Hold at top 1-2 seconds. Lower with control. Keep core braced throughout."
       },
       {
         "name": "Rest",
@@ -627,7 +628,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Lie face down. Simultaneously raise opposite arm and leg. Hold briefly. Alternate sides. Keep neck neutral \u2014 look at floor."
+        "info": "Lie face down, arms extended overhead. Simultaneously lift right arm and left leg. Hold 2 seconds at top. Lower with control. Alternate sides. Keep neck neutral looking at floor."
       },
       {
         "name": "Rest",
@@ -658,14 +659,14 @@ const ALL_WORKOUTS = [
         "note": "2 min \u00b7 300 meters",
         "duration": 120,
         "isRest": false,
-        "info": "Target 300 meters in 2 minutes. Drive with legs first, lean back, then pull. Maintain power through the whole stroke."
+        "info": "Sequence: Legs, then Back, then Arms on the drive. Arms, Back, Legs on the return. Start each stroke by pushing with legs first. Lean back slightly at finish. Long powerful strokes rather than fast choppy ones."
       },
       {
         "name": "Kettlebell RDL (1 Bell)",
         "note": "40s \u00b7 14-18 kg",
         "duration": 40,
         "isRest": false,
-        "info": "Hinge at hip with kettlebell in one hand. Keep back flat. Lower toward floor while opposite leg extends behind. 14-18 kg."
+        "info": "Hold KB in one hand, slight bend in standing knee. Hinge at hip lowering KB toward floor as opposite leg extends behind you. Feel the hamstring stretch at bottom. Drive hips forward to return. Keep back flat. 14-18 kg."
       },
       {
         "name": "Rest",
@@ -678,7 +679,7 @@ const ALL_WORKOUTS = [
         "note": "40s \u00b7 15 lbs",
         "duration": 40,
         "isRest": false,
-        "info": "Hinge forward with dumbbells on floor. Row one dumbbell while the other touches down. Alternate sides. 15 lbs each."
+        "info": "Two DBs on floor, hinge forward with flat back. Row one DB to hip while the other stays grounded. Alternate with control. Keep hips square. Hits back and rear delts effectively. 15 lbs each."
       },
       {
         "name": "Rest",
@@ -691,7 +692,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Feet on bench. Drive hips up squeezing glutes. Hold at top briefly. Lower with control."
+        "info": "Upper back on mat, feet on bench. Drive hips up by squeezing glutes, not by pushing with lower back. Hold at top 1-2 seconds. Lower with control. Keep core braced throughout."
       },
       {
         "name": "Rest",
@@ -704,7 +705,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on back holding medicine ball at chest. Perform sit-up and press ball overhead at top. Control descent."
+        "info": "Lie on back holding medicine ball at chest. Perform a full sit-up and at the top press the ball straight overhead. Lower ball to chest as you descend. Control the descent throughout."
       },
       {
         "name": "Rest",
@@ -739,14 +740,14 @@ const ALL_WORKOUTS = [
         "note": "2 min \u00b7 300 meters",
         "duration": 120,
         "isRest": false,
-        "info": "Target 300 meters in 2 minutes. Drive with legs first, lean back, then pull. Maintain power through every stroke."
+        "info": "Sequence: Legs, then Back, then Arms on the drive. Arms, Back, Legs on the return. Start each stroke by pushing with legs first. Lean back slightly at finish. Long powerful strokes rather than fast choppy ones."
       },
       {
         "name": "Kettlebell RDL (1 Bell)",
         "note": "40s \u00b7 14-18 kg",
         "duration": 40,
         "isRest": false,
-        "info": "Hinge at hip with kettlebell in one hand. Keep back flat. Lower toward floor while opposite leg extends behind. 14-18 kg."
+        "info": "Hold KB in one hand, slight bend in standing knee. Hinge at hip lowering KB toward floor as opposite leg extends behind you. Feel the hamstring stretch at bottom. Drive hips forward to return. Keep back flat. 14-18 kg."
       },
       {
         "name": "Rest",
@@ -759,7 +760,7 @@ const ALL_WORKOUTS = [
         "note": "40s \u00b7 15 lbs",
         "duration": 40,
         "isRest": false,
-        "info": "Hinge forward. Row one dumbbell up while other rests. Alternate with control. 15 lbs each."
+        "info": "Two DBs on floor, hinge forward with flat back. Row one DB to hip while the other stays grounded. Alternate with control. Keep hips square. Hits back and rear delts effectively. 15 lbs each."
       },
       {
         "name": "Rest",
@@ -772,7 +773,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Feet on bench. Drive hips up squeezing glutes. Hold at top. Lower with control."
+        "info": "Upper back on mat, feet on bench. Drive hips up by squeezing glutes, not by pushing with lower back. Hold at top 1-2 seconds. Lower with control. Keep core braced throughout."
       },
       {
         "name": "Rest",
@@ -785,7 +786,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "Hold medicine ball at chest. Sit up and press ball overhead. Lower with control."
+        "info": "Lie on back holding medicine ball at chest. Perform a full sit-up and at the top press the ball straight overhead. Lower ball to chest as you descend. Control the descent throughout."
       },
       {
         "name": "Rest",
@@ -821,14 +822,14 @@ const ALL_WORKOUTS = [
         "note": "90s \u00b7 100 yards",
         "duration": 90,
         "isRest": false,
-        "info": "Push sled 100 yards. Athletic stance, lean into sled. Drive with legs. Keep back flat. Pace yourself for 90 seconds."
+        "info": "Lean into the sled at roughly 45 degrees. Drive powerfully with alternating legs using short quick powerful steps. Keep back flat and core braced. Arms stay straight pushing through the handles."
       },
       {
         "name": "Dumbbell Goblet Box Squat",
         "note": "40s \u00b7 20 lbs",
         "duration": 40,
         "isRest": false,
-        "info": "Hold dumbbell at chest. Stand in front of box. Sit back onto box with control. Stand explosively. Keep chest up. 20 lbs."
+        "info": "Hold DB at chest, stand close to box behind you. Sit back and down onto box touching lightly without fully relaxing. Drive through heels to stand explosively. Keep chest tall and knees tracking over toes."
       },
       {
         "name": "Rest",
@@ -841,7 +842,7 @@ const ALL_WORKOUTS = [
         "note": "40s \u00b7 20 lbs",
         "duration": 40,
         "isRest": false,
-        "info": "Lie on bench. Press dumbbells from chest to full extension. Control descent. Feet flat on floor. 20 lbs each."
+        "info": "Lie on bench with feet flat on floor. Press dumbbells from chest to full extension. Lower with control keeping elbows at 45 degrees to body. Full range of motion. 20 lbs each hand."
       },
       {
         "name": "Rest",
@@ -854,7 +855,7 @@ const ALL_WORKOUTS = [
         "note": "40s \u00b7 20 lbs",
         "duration": 40,
         "isRest": false,
-        "info": "Alternate between lateral raise and front raise. Keep slight bend in elbows. Raise to shoulder height. Control descent."
+        "info": "Alternate between a lateral raise to the side and a front raise straight ahead. Keep slight bend in elbows. Raise to shoulder height each time. Control the descent on both movements. 20 lbs."
       },
       {
         "name": "Rest",
@@ -867,7 +868,7 @@ const ALL_WORKOUTS = [
         "note": "40 seconds",
         "duration": 40,
         "isRest": false,
-        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly. Alternate sides. Keep core tight and hips level."
+        "info": "On all fours, wrists under shoulders, knees under hips. Simultaneously extend left arm and right leg until both are parallel to floor. Hold 2 seconds. Return with control. Alternate. Keep hips perfectly level."
       },
       {
         "name": "Rest",
@@ -902,7 +903,7 @@ const ALL_WORKOUTS = [
         "note": "1m 30s \u00b7 High Intensity",
         "duration": 90,
         "isRest": false,
-        "info": "Push to high intensity. Drive hard with both arms and legs. Maintain consistent effort for full 90 seconds."
+        "info": "Sit tall with slight forward lean. Drive with both arms AND legs simultaneously. Aim for a consistent pace and avoid going all-out in round 1. RPM over 60 is solid work."
       },
       {
         "name": "Rest",
@@ -915,7 +916,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 20-40 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Hold dumbbell at chest. Squat onto box. Drive through heels to stand. Keep knees tracking over toes. 20-40 lbs."
+        "info": "Hold DB at chest, stand close to box behind you. Sit back and down onto box touching lightly without fully relaxing. Drive through heels to stand explosively. Keep chest tall and knees tracking over toes."
       },
       {
         "name": "Rest",
@@ -928,7 +929,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Hold ViPR. Perform lateral skater bounds side to side. Land softly on one foot. Keep core engaged throughout."
+        "info": "Hold ViPR across body. Perform lateral skater bounds side to side landing softly on one foot at a time. Slight forward lean on landing. Core tight throughout. ViPR adds load and balance challenge."
       },
       {
         "name": "Rest",
@@ -941,7 +942,7 @@ const ALL_WORKOUTS = [
         "note": "1 min \u00b7 10-20 lbs",
         "duration": 60,
         "isRest": false,
-        "info": "Step up onto box while pressing dumbbells overhead. Control press and descent. Alternate leading legs. 10-20 lbs each."
+        "info": "Step up onto box while simultaneously pressing dumbbells overhead. Control the press and the descent. Alternate leading legs each rep. Core braced throughout the combined movement. 10-20 lbs each."
       },
       {
         "name": "Rest",
@@ -954,7 +955,7 @@ const ALL_WORKOUTS = [
         "note": "1 minute",
         "duration": 60,
         "isRest": false,
-        "info": "Start in forearm plank on BOSU flat side down. Transition up to hand plank one arm at a time. Keep hips level."
+        "info": "Start in forearm plank on BOSU flat side down. Transition to hand plank one arm at a time, up-up then down-down. Keep hips level throughout and do not let them sway. Core stays braced."
       },
       {
         "name": "Rest",
@@ -991,7 +992,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 120,
-        "info": "Set step mill to comfortable pace. Drive through each step. Keep posture upright. 5 sets of 2 minutes."
+        "info": "Keep posture upright and resist leaning on rails. Take full steps driving through the whole foot. Adjust speed so you can complete full 2-minute sets. Find a sustainable steady-state pace."
       },
       {
         "name": "Rest",
@@ -1008,7 +1009,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "Lie on back. Single leg lower then double leg lower. Keep lower back flat. 3 sets of 30 seconds."
+        "info": "Lie on back. Lower ONE leg toward floor keeping the other at 90 degrees, then lower BOTH legs together. Press lower back into the mat at all times. If lower back lifts, reduce the range of motion."
       },
       {
         "name": "Penguins Core",
@@ -1019,7 +1020,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "Lie on back with knees bent. Crunch up slightly. Reach side to side touching heels. Keep feet flat. 3 sets of 30 seconds."
+        "info": "Lie on back, knees bent, feet flat. Crunch up slightly raising shoulder blades. Reach right hand to tap right heel, then left hand to left heel. Keep that crunch position throughout the set."
       },
       {
         "name": "Hollow Hold",
@@ -1030,7 +1031,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "Press lower back flat. Raise legs and arms holding a dish position. Breathe steadily. 3 sets of 30 seconds."
+        "info": "Lie on back. Press lower back FLAT into mat. Raise legs to 30-45 degrees and extend arms overhead by ears. Hold the dish shape. If back lifts, raise legs higher. Breathe steadily. 30 seconds."
       },
       {
         "name": "Rest",
@@ -1046,7 +1047,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Wide grip on fixed barbell. Curl from full extension to shoulder height. Keep elbows at sides. Control descent. 30-40 lbs."
+        "info": "Wide grip targets the short inner head of the bicep. Keep elbows pinned at sides throughout. Full extension at bottom, squeeze hard at top. Control the descent 2-3 seconds down. 30-40 lbs."
       },
       {
         "name": "Rest",
@@ -1062,7 +1063,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit on incline bench. Alternate curling each arm from full extension. Supinate wrist at top. 15-25 lbs."
+        "info": "Incline bench stretches the bicep at bottom for greater range. Let arm hang fully at bottom. Supinate (rotate palm up) as you curl. Alternate arms. Elbows stay back. 15-25 lbs."
       },
       {
         "name": "Rest",
@@ -1078,7 +1079,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Stand on band. Curl by dragging hands up along body. Elbows move back. Squeeze at top. Red band."
+        "info": "Stand on band. Instead of a normal curl arc, drag hands up along the body with elbows moving back as you curl. This keeps tension on the bicep differently. Squeeze hard at top. Red band."
       }
     ],
     "cooldown": null
@@ -1108,7 +1109,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 600,
-        "info": "Set Woodway treadmill to 7% incline, speed 3.0. Walk for 10 minutes. Stay upright \u2014 do not hold rails."
+        "info": "Set to 7% incline, speed 3.0. Walk tall and do NOT hold the handrails. Holding rails reduces calorie burn significantly. Pump arms naturally. Challenges glutes, hamstrings and cardiovascular system simultaneously."
       },
       {
         "name": "Wall Ball Sit Up + Overhead Ext.",
@@ -1119,7 +1120,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "Lie with feet against wall. Hold medicine ball. Perform sit-up then press ball overhead at top. Lower with control."
+        "info": "Anchor feet against wall. Hold medicine ball at chest. Perform full sit-up and at the top press ball straight overhead extending arms fully. Lower ball to chest as you descend."
       },
       {
         "name": "Medicine Ball Plank Reaches",
@@ -1130,7 +1131,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "In plank with hands on medicine ball. Reach one hand forward. Alternate sides. Keep hips level and core tight."
+        "info": "Start in high plank with both hands on medicine ball. Remove one hand and reach it forward. Return then switch sides. Ball adds instability so brace core extra hard. Keep hips perfectly level."
       },
       {
         "name": "Medicine Ball Russian Twist",
@@ -1141,7 +1142,7 @@ const ALL_WORKOUTS = [
         "isRest": false,
         "isTimed": true,
         "workDuration": 30,
-        "info": "Sit with knees bent. Hold medicine ball. Rotate side to side touching ball to floor. Keep chest up."
+        "info": "Sit with knees bent. Hold medicine ball with both hands. Rotate fully to right touching ball near floor then left. Keep chest tall. Rotation comes from your torso not just your arms."
       },
       {
         "name": "Rest",
@@ -1157,7 +1158,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on floor with EZ bar. Lower bar toward forehead by bending elbows. Press back up. Keep upper arms perpendicular to floor. 30 lbs."
+        "info": "Lie on floor. EZ bar with close grip. Upper arms vertical and completely fixed, only forearms move. Lower bar toward forehead. Focus on the squeeze at lockout. Keep upper arms perfectly still throughout."
       },
       {
         "name": "Rest",
@@ -1173,7 +1174,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Face cable. Grip dual handles with underhand grip. Press down extending elbows fully. Control return. 15 lbs."
+        "info": "Face the cable machine with underhand (supinated) grip. Keep elbows at sides. Press down extending elbows fully. This grip hits the lateral head of triceps. Slow controlled return. 15 lbs."
       },
       {
         "name": "Rest",
@@ -1189,7 +1190,7 @@ const ALL_WORKOUTS = [
         "restDuration": 45,
         "isRest": false,
         "isTimed": false,
-        "info": "Staggered stance facing away from cable. Extend arms overhead. Keep elbows in tight. Full extension at top. 15 lbs."
+        "info": "Face away from cable set high. Staggered stance for stability. Grip rope or handle overhead. Extend arms forward pressing down to full lockout. Targets the long head of triceps. Keep elbows in close. 15 lbs."
       }
     ],
     "cooldown": null
@@ -1217,7 +1218,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Hold dumbbells at thighs. Hinge at hips, lowering weights down legs. Keep back flat. Drive hips forward to return. Feel hamstring stretch."
+        "info": "Hold DBs at thighs. Push hips back as you hinge forward, weight travels down the legs. Feel the hamstring stretch at bottom around mid-shin level. Drive hips forward to return and squeeze glutes at top. Keep back flat."
       },
       {
         "name": "Hoist Seated Leg Curl",
@@ -1227,7 +1228,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Adjust pad to just above ankles. Curl legs down toward seat. Squeeze hamstrings at bottom. Control the return."
+        "info": "Adjust so pad sits just above ankles. Curl legs toward seat squeezing hamstrings. Pause briefly at full contraction. Return slowly 3-4 seconds. The slow descent is where strength is built."
       },
       {
         "name": "Machine Pulldown",
@@ -1237,7 +1238,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Grip bar wider than shoulder width. Pull bar to upper chest, driving elbows down. Lean back slightly. Control the return."
+        "info": "Grip bar just wider than shoulders. Pull to upper chest while driving elbows down and slightly back. Lean back about 15-20 degrees. Squeeze lats at bottom. Return with control and feel the stretch at top."
       },
       {
         "name": "Dumbbell Bent Over Row",
@@ -1247,7 +1248,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Hinge forward at hips. Row dumbbells to lower rib cage. Drive elbows back. Keep back flat. Control descent."
+        "info": "Hinge forward to about 45 degrees. DBs hang at arm's length. Row to lower ribs with elbows traveling back past torso. Squeeze shoulder blades at top. Lower with control. Keep back flat."
       },
       {
         "name": "Fixed Barbell Biceps Curl (Narrow)",
@@ -1257,7 +1258,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Narrow grip on fixed barbell. Curl to shoulder height. Squeeze at top. Slow controlled descent. Keep elbows pinned at sides."
+        "info": "Narrow grip targets the long outer head of the bicep creating peak. Keep elbows tight at sides. Full extension at bottom. Squeeze and hold briefly at top. 2-3 second controlled descent."
       },
       {
         "name": "Dumbbell Hammer Curl",
@@ -1267,7 +1268,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Neutral grip (palms facing each other). Curl alternately or together. Keep elbows at sides."
+        "info": "Neutral grip with palms facing each other throughout, no rotation. Targets brachialis which sits under the bicep and adds arm thickness. Alternate arms. Keep elbows pinned at sides. Full range."
       },
       {
         "name": "Hoist Ab Crunch",
@@ -1277,7 +1278,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit in ab crunch machine. Crunch forward contracting abs. Hold briefly at full contraction. Slow controlled return."
+        "info": "Sit in machine. Crunch forward pulling rib cage toward hips, this is a short controlled movement. Hold the contraction 1-2 seconds. Slow controlled return. Breathe out on the crunch."
       },
       {
         "name": "Cable Standing Rotation",
@@ -1287,7 +1288,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Stand sideways to cable. Hold handle with both hands. Rotate torso away from cable. Keep hips square. Return with control."
+        "info": "Stand sideways to cable, arms extended. Rotate torso away from cable with hips staying square and movement coming from core. Control the return and resist the cable pulling you back. Perform both directions."
       }
     ],
     "cooldown": {
@@ -1321,7 +1322,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Hip-width stance. Grip bar just outside knees. Push floor away, keep bar close to body. Lock out at top. Hinge back down with control."
+        "info": "Hip-width stance, bar over mid-foot. Hinge down and grip just outside knees. Big breath and brace core. Push the floor away rather than pulling the bar up. Bar stays close to legs the whole way. Lock out hips and knees at top."
       },
       {
         "name": "Machine Prone Leg Curl",
@@ -1331,7 +1332,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie face down. Curl legs toward glutes. Squeeze at top. Slow eccentric return. Don't let hips rise off pad."
+        "info": "Lie face down, pad just above ankles, hips flat on pad. Curl toward glutes squeezing hamstrings. Do not let hips rise. Pause at top. Lower very slowly 3-4 seconds. The slow descent builds hamstring strength."
       },
       {
         "name": "Glute Bridge Feet Elevated",
@@ -1341,7 +1342,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Feet on bench. Drive hips up squeezing glutes hard at top. Lower with control. Keep core tight throughout."
+        "info": "Upper back on mat, feet on bench. Drive hips up by squeezing glutes, not by pushing with your back. Hold at top 1-2 seconds. Lower with control. 5 sets of 20 for high-volume glute development."
       },
       {
         "name": "TRX Row",
@@ -1351,7 +1352,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lean back holding TRX handles. Pull chest to hands squeezing shoulder blades. The more horizontal your body, the harder it is."
+        "info": "Face anchor point. Lean back with body at an angle. Pull chest to handles driving elbows wide. Squeeze shoulder blades hard at top. The more horizontal your body the harder the exercise. Keep body straight throughout."
       },
       {
         "name": "Machine Assisted Pull Up",
@@ -1361,7 +1362,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Kneel on assist platform. Pull up driving elbows down. Get chin above bar. Control the descent. Adjust assist weight as needed."
+        "info": "Choose assist weight, more weight equals easier. Kneel on platform. Pull up driving elbows down toward hips. Aim to get chin above bar. Lower very slowly 3-4 seconds. Reduce assist weight gradually over time."
       },
       {
         "name": "Dumbbell Alt. Curl (Rotational)",
@@ -1371,7 +1372,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Alternate arms. Supinate wrist (rotate palm up) as you curl. Full extension at bottom. Squeeze at top."
+        "info": "Start with neutral grip, palm facing in. As you curl, rotate (supinate) so palm faces up at the top. This rotation through full range maximally contracts the bicep. Alternate arms. Full extension at bottom."
       },
       {
         "name": "Dumbbell Alt. Hammer Curl",
@@ -1381,7 +1382,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Neutral grip alternating curls. Elbows stay at sides. Full range of motion. Targets brachialis and brachioradialis."
+        "info": "Neutral grip throughout with no rotation. Targets brachialis which adds thickness under the bicep. Alternate arms. Keep elbows at sides. Full range of motion. Control the descent."
       },
       {
         "name": "Machine Abdominal Crunch",
@@ -1391,7 +1392,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit in machine. Crunch forward contracting abs fully. Hold briefly. Slow controlled return. Breathe out on contraction."
+        "info": "Sit with back against pad. Crunch forward pulling ribcage toward hips in a short controlled movement. Hold the contraction. Return slowly. Breathe out as you crunch. Adjust weight so last few reps are challenging."
       },
       {
         "name": "Cable Standing Rotation",
@@ -1401,7 +1402,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Stand sideways to cable. Rotate torso away. Keep hips square \u2014 movement is all torso. Return controlled."
+        "info": "Stand sideways to cable, arms extended. Rotate torso away from cable with hips staying square and movement coming from core. Control the return and resist the cable pulling you back. Perform both directions."
       }
     ],
     "cooldown": {
@@ -1436,7 +1437,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Place feet shoulder-width on platform. Lower sled until knees at 90\u00b0. Press through heels. Don't lock knees out fully."
+        "info": "Feet shoulder-width on mid-platform. Lower sled until knees reach 90 degrees. Press through heels. Do not fully lock knees at top. Controlled descent on every rep. High foot placement works more glutes, lower works more quads."
       },
       {
         "name": "Dumbbell Goblet Box Squat",
@@ -1446,7 +1447,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Hold dumbbell at chest. Sit back onto box with control. Stand explosively driving through heels. Keep chest up throughout."
+        "info": "Hold DB at chest, stand close to box behind you. Sit back and down onto box touching lightly without fully relaxing. Drive through heels to stand explosively. Keep chest tall and knees tracking over toes."
       },
       {
         "name": "Dumbbell Incline Chest Press (45\u00b0)",
@@ -1456,7 +1457,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Set bench to 45\u00b0. Press from chest to full extension. Lower with control. Focus on upper chest activation."
+        "info": "45 degree incline targets the upper chest. DBs start at chest, elbows at 45 degrees to body. Press to full extension directly above upper chest. Lower with control. Do not let DBs drift too wide."
       },
       {
         "name": "Chair Dumbbell Lateral Raise",
@@ -1466,7 +1467,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit in chair. Raise dumbbells to sides to shoulder height. Slight bend in elbows. Control descent. Focus on medial deltoid."
+        "info": "Sit tall in chair. Raise DBs to shoulder height with slight elbow bend, leading with elbows not hands. Pause briefly at top. Lower with control 2-3 seconds down. Isolates the medial (side) deltoid."
       },
       {
         "name": "Cable Triceps Ext. (Rope)",
@@ -1476,7 +1477,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Face cable with rope attachment at top. Pull rope down extending elbows. Flare rope ends out at bottom. Full extension. Control return."
+        "info": "Face cable with rope at top. Start with elbows at sides, forearms parallel to floor. Press rope down flaring the ends apart at the bottom. This full extension maximally contracts the triceps. Control the return. Full lockout every rep."
       },
       {
         "name": "Cable Forward Lean Triceps Ext. (Rope)",
@@ -1486,7 +1487,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lean forward from cable. Hold rope overhead. Extend elbows forward/down. Unique angle for long head of triceps."
+        "info": "Lean forward from high cable at about 45 degrees. Hold rope behind head. Press forward and down extending elbows. This angle specifically targets the long head of the tricep. Keep elbows in close."
       },
       {
         "name": "Bird Dog",
@@ -1496,7 +1497,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly. Return with control. Keep hips level. No rotation."
+        "info": "On all fours, wrists under shoulders, knees under hips. Simultaneously extend left arm and right leg until both are parallel to floor. Hold 2 seconds. Return with control. Alternate. Keep hips perfectly level."
       },
       {
         "name": "Stability Ball Dead Bug (Alt. Arm/Leg)",
@@ -1506,7 +1507,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on back with stability ball between knees and hands. Lower opposite arm and leg while pressing into ball. Alternate sides."
+        "info": "Lie on back. Press stability ball between hands and knees and maintain this pressure throughout. Lower opposite arm and leg toward floor without letting lower back arch. The ball pressing keeps core constantly engaged."
       }
     ],
     "cooldown": {
@@ -1543,7 +1544,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "High foot placement for glute focus, lower for quads. Press through heels. Control descent. Don't allow knees to cave."
+        "info": "Higher foot placement works more glutes and hamstrings. Lower foot placement works more quads. Press through heels. Control descent and do not let sled drop. Do not lock knees at top. Sustainable pace for 20 reps."
       },
       {
         "name": "Kettlebell Sumo Squat",
@@ -1553,7 +1554,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Wide stance, toes out. Hold kettlebell between legs. Sit low into squat. Drive knees out. Squeeze glutes at top."
+        "info": "Wide stance, toes pointed out 45 degrees. Hold KB between legs with both hands. Sit into the squat with hips dropping down and back. Drive knees out over toes. Squeeze glutes hard at top. Targets inner thighs and glutes."
       },
       {
         "name": "Machine Leg Ext.",
@@ -1563,7 +1564,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Adjust pad to ankles. Extend legs fully. Hold briefly at top. Slow eccentric. Don't swing \u2014 isolate the quad."
+        "info": "Adjust pad to just above ankles. Extend legs to full lockout and squeeze quads hard at top. Hold 1 second. Lower slowly 3-4 seconds. Great for VMO (inner quad) development. Do not swing the weight."
       },
       {
         "name": "DB Alternating Front Raise",
@@ -1573,7 +1574,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Alternate raising each dumbbell to shoulder height. Keep arm straight. Control descent. Targets anterior deltoid."
+        "info": "Hold DBs at thighs with slight bend in elbows. Raise one arm forward to shoulder height with thumb up or neutral grip. Lower with control as the other arm raises. Keep torso still with no swinging. Targets anterior deltoid."
       },
       {
         "name": "BOSU Dumbbell Chest Press",
@@ -1583,7 +1584,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on BOSU dome side. Press dumbbells from chest. Added instability engages core and stabilizers. Control the movement."
+        "info": "Lie on BOSU dome side. The instability forces core and stabilizer muscles to work harder than a flat bench. Press DBs from chest to full extension. Control the movement carefully throughout."
       },
       {
         "name": "EZ Bar Floor Tricep Extension",
@@ -1593,7 +1594,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on floor. Lower EZ bar toward forehead bending elbows. Press back up. Keep upper arms vertical."
+        "info": "Lie on floor. EZ bar with close grip. Upper arms vertical and completely fixed, only forearms move. Lower bar toward forehead. Focus on the squeeze at lockout. Keep upper arms perfectly still throughout."
       },
       {
         "name": "Cable Forward Lean Overhead Triceps Ext.",
@@ -1603,7 +1604,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lean forward from high cable. Extend arms overhead. Great for long head triceps. Keep elbows close."
+        "info": "Face away from high cable. Lean forward at 45 degrees. Grip rope or handle overhead. Extend arms forward pressing down to full lockout. Overhead stretch position maximally loads the long head of triceps."
       },
       {
         "name": "Bird Dog",
@@ -1613,7 +1614,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly at extension. Alternate. Keep hips square."
+        "info": "On all fours, wrists under shoulders, knees under hips. Simultaneously extend left arm and right leg until both are parallel to floor. Hold 2 seconds. Return with control. Alternate. Keep hips perfectly level."
       },
       {
         "name": "Stability Ball Dead Bug (Alt. Arm/Leg)",
@@ -1623,7 +1624,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on back. Ball between hands and knees. Lower alternating limbs. Press into ball throughout for core activation."
+        "info": "Lie on back. Press stability ball between hands and knees and maintain this pressure throughout. Lower opposite arm and leg toward floor without letting lower back arch. The ball pressing keeps core constantly engaged."
       }
     ],
     "cooldown": {
@@ -1654,7 +1655,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie on back with feet flat. Bridge up. Hold dumbbell overhead and pull over from chest while holding bridge. 15-20 lbs."
+        "info": "Lie on back, feet flat. Bridge up and hold throughout the set. While holding bridge, hold one DB with both hands above chest. Lower DB overhead toward floor then pull back to chest. Combines glute hold with lat and chest stretch."
       },
       {
         "name": "Cable Pulldown (Wide MAG)",
@@ -1664,7 +1665,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Wide grip MAG attachment. Pull to upper chest. Drive elbows down and back. Lean slightly back. Squeeze at bottom. 40-55 lbs."
+        "info": "Wide grip on MAG attachment. Pull bar to upper chest driving elbows down and slightly back. Lean back 15-20 degrees. Squeeze lats at bottom. Full stretch at top. 40-55 lbs."
       },
       {
         "name": "Barbell Bench Press",
@@ -1674,7 +1675,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Arch back slightly, feet flat. Lower bar to mid-chest. Press to full extension. Don't bounce off chest. 45 lbs."
+        "info": "Grip just wider than shoulders. Feet flat, slight arch in lower back. Lower bar to mid-chest and touch lightly. Press up and slightly back. Do not bounce off chest. Full lockout at top. 45 lbs."
       },
       {
         "name": "Landmine 1/2 Kneeling 1-Arm Shoulder Press",
@@ -1684,7 +1685,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Half-kneel facing landmine. Press bar at an angle overhead. Keep core braced. Alternate sides between sets."
+        "info": "Half-kneel facing the landmine at an angle. Hold end of bar at shoulder. Press up and slightly forward along the bar arc. Keep core braced and do not lean back. Alternate sides between sets."
       },
       {
         "name": "Fixed Barbell Biceps Curl (Wide)",
@@ -1694,7 +1695,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Wide grip. Curl with control. Full extension at bottom. Squeeze at top. Short rest \u2014 keep intensity high. 25 lbs."
+        "info": "Wide grip targets the short inner head of the bicep. Keep elbows pinned at sides throughout. Full extension at bottom, squeeze hard at top. Control the descent 2-3 seconds down. 30-40 lbs."
       },
       {
         "name": "Dual Cable Tricep Extension (Bent Over)",
@@ -1736,7 +1737,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Raise dumbbells in a V shape \u2014 between front raise and lateral raise. Thumbs up. Raise to shoulder height. Targets supraspinatus. 5-10 lbs."
+        "info": "Stand with DBs at sides. Raise arms in a V shape, halfway between a front raise and a lateral raise. Thumbs pointing up. Raise to shoulder height. Targets the supraspinatus rotator cuff and upper traps. 5-10 lbs."
       },
       {
         "name": "Dumbbell Incline Chest Press",
@@ -1746,7 +1747,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Set bench to incline. Press from chest to full extension. Control descent. Upper chest focus. 15-25 lbs each hand."
+        "info": "Set bench to 30-45 degree incline. DBs start at chest, elbows at 45 degrees. Press to full extension above upper chest. Lower with control feeling the stretch at bottom. 15-25 lbs each hand."
       },
       {
         "name": "Dumbbell Bent Over Rear Delt Fly (Overhand)",
@@ -1756,7 +1757,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Hinge forward 45\u00b0. Overhand grip. Fly arms out to sides. Squeeze rear delts. Control return. Don't use momentum. 5-10 lbs."
+        "info": "Hinge forward to 45 degrees. Overhand grip with palms down. Fly arms out to sides keeping slight elbow bend. Squeeze rear deltoids and mid-traps at top. Lower with control. No momentum. 5-10 lbs."
       },
       {
         "name": "TRX Row",
@@ -1766,7 +1767,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Bodyweight. Lean back. Pull chest to handles. Drive elbows wide. Squeeze shoulder blades. Walk feet forward to increase difficulty."
+        "info": "Face anchor point. Lean back with body at an angle. Pull chest to handles driving elbows wide. Squeeze shoulder blades hard at top. The more horizontal your body the harder the exercise. Keep body straight throughout."
       },
       {
         "name": "Dumbbell Alt. Incline Hammer Curl",
@@ -1776,7 +1777,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Incline bench, neutral grip. Alternately curl. Full extension at bottom. 10-20 lbs. Short rest \u2014 superset feel."
+        "info": "Incline bench with neutral grip, palms facing each other. Incline fully stretches the bicep at bottom for greater range. Alternate arms curling to shoulder. Do not let elbows drift forward. Full range. 10-20 lbs."
       },
       {
         "name": "EZ Bar Flat Triceps Ext. (Behind Head)",
@@ -1786,7 +1787,7 @@ const ALL_WORKOUTS = [
         "restDuration": 30,
         "isRest": false,
         "isTimed": false,
-        "info": "Lie flat. Hold EZ bar overhead. Lower behind head by bending elbows. Press back up. Keep upper arms vertical. 25 lbs."
+        "info": "Lie flat on bench. Hold EZ bar with close grip directly overhead. Lower bar behind head by bending elbows only with elbows pointing up not out. Press back to start. Overhead position maximally stretches long head of triceps. 25 lbs."
       }
     ],
     "cooldown": {
@@ -1819,7 +1820,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Upper back on bench. Drive hips up squeezing glutes hard at top. Hold briefly. Lower with control. Bodyweight first to warm up."
+        "info": "Upper back on bench, feet flat on floor hip-width apart. Drive hips up by squeezing glutes, not by arching your lower back. Hips, knees and shoulders form a straight line at top. Hold 1-2 seconds. Lower with control."
       },
       {
         "name": "Kettlebell Deadlift (1 Bell)",
@@ -1829,7 +1830,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Stand over kettlebell. Hinge and grip handle. Drive through heels to stand. Keep back flat. Lower with control. 30-60 lbs."
+        "info": "Stand over KB with feet hip-width. Hinge down keeping back flat and grip the handle. Brace core and take a breath. Drive through heels to stand with KB traveling close to legs. Lock out hips and knees at top. 30-60 lbs."
       },
       {
         "name": "Hoist Seated Leg Curl",
@@ -1839,7 +1840,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Adjust pad. Curl down squeezing hamstrings. Pause at bottom. Slow return. 80-120 lbs."
+        "info": "Adjust so pad sits just above ankles. Curl legs toward seat squeezing hamstrings. Pause briefly at full contraction. Return slowly 3-4 seconds. The slow descent is where strength is built."
       },
       {
         "name": "Machine Hip Abduction",
@@ -1849,7 +1850,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit in machine. Push pads apart using glutes and hip abductors. Control the return. Don't let pads slam together. 50-100 lbs."
+        "info": "Sit in machine with pads against outer thighs. Push pads apart using glutes and hip abductors. Go to full range. Slow controlled return and resist the weight. Targets glute medius, the outer glute. 50-100 lbs."
       },
       {
         "name": "Dumbbell Seated Calf Raise",
@@ -1859,7 +1860,7 @@ const ALL_WORKOUTS = [
         "restDuration": 60,
         "isRest": false,
         "isTimed": false,
-        "info": "Sit on bench. Place dumbbell on thigh. Raise heels as high as possible. Lower fully for full stretch. 10-20 lbs."
+        "info": "Sit on bench, DB balanced on thigh near knee. Raise heel as high as possible for full plantar flexion. Hold 1 second at top. Lower fully letting heel drop below bench level for full stretch. Full range and high reps for calves."
       }
     ],
     "cooldown": {
@@ -1869,7 +1870,6 @@ const ALL_WORKOUTS = [
     }
   }
 ];
-
 // ════════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════════
@@ -2240,7 +2240,7 @@ function startCooldown() {
   document.getElementById('curr-name').textContent = cd.name;
   document.getElementById('curr-note').textContent = cd.note;
   document.getElementById('curr-card').className = 'curr-card';
-  document.getElementById('curr-icon').textContent = '🏁';
+  document.getElementById('curr-info-text').textContent = 'Great work completing the main workout! Use this time to bring your heart rate down gradually. Keep moving at a comfortable pace.';
   document.getElementById('phase-pill').textContent = 'COOL DOWN';
   document.getElementById('phase-pill').className = 'phase-pill cool-pill';
   document.getElementById('set-pill').style.display = 'none';
@@ -2338,14 +2338,14 @@ function updateCurrentUI(ex) {
   if (ex.isRest) {
     card.className = 'curr-card rest-card';
     pill.textContent = 'REST'; pill.className = 'phase-pill rest-pill';
-    document.getElementById('curr-icon').textContent = '✋';
+    document.getElementById('curr-info-text').textContent = 'Rest and recover. Focus on controlled breathing — inhale through nose, exhale through mouth. Prepare mentally for the next exercise.';
     document.getElementById('ring-fill').setAttribute('stroke','#D97706');
     setPill.style.display = 'none';
     document.getElementById('ring-lbl').textContent = 'rest';
   } else {
     card.className = 'curr-card';
     pill.textContent = 'WORK'; pill.className = 'phase-pill work-pill';
-    document.getElementById('curr-icon').textContent = '💪';
+    document.getElementById('curr-info-text').textContent = ex.info || 'Focus on controlled movement and proper form throughout.';
     document.getElementById('ring-fill').setAttribute('stroke','#111');
     document.getElementById('ring-lbl').textContent = 'seconds';
     if (currentWorkout.type === 'sets' && ex.sets > 1) {
@@ -2362,7 +2362,7 @@ function updateRestUI(noteText) {
   card.className = 'curr-card rest-card';
   document.getElementById('phase-pill').textContent = 'REST';
   document.getElementById('phase-pill').className = 'phase-pill rest-pill';
-  document.getElementById('curr-icon').textContent = '✋';
+  document.getElementById('curr-info-text').textContent = 'Rest and recover. Breathe steadily. Shake out tension in your muscles and prepare for the next set.';
   document.getElementById('ring-fill').setAttribute('stroke','#D97706');
   document.getElementById('ring-lbl').textContent = 'rest';
   document.getElementById('curr-name').textContent = 'Rest';
