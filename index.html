@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Workout Home</title>
+
+<!-- Mobile bookmark / PWA appearance -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Workout Home">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Workout Home">
+<meta name="theme-color" content="#ffffff">
+
+<!-- Bookmark icon (dumbbell emoji rendered as SVG favicon) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111'/><text y='.9em' font-size='78' x='10'>🏋️</text></svg>">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAAtSgDRAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAMwSURBVHic7dAxAQAAAMKg9U9tCy+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#fff;color:#111;font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+button,a{font-family:'Barlow',sans-serif}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ===== HUB SCREEN ===== */
+.hub-header{background:#fff;border-bottom:3px solid #111;padding:32px 20px 20px}
+.hub-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#888;margin-bottom:6px}
+.hub-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:48px;line-height:.95;color:#111;margin-bottom:4px}
+.hub-title span{color:#D97706}
+.hub-subtitle{font-size:13px;color:#888;margin-top:6px}
+.hub-counts{display:flex;gap:24px;margin-top:14px}
+.hub-count-item .num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;line-height:1}
+.hub-count-item .lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}
+
+.filter-row{display:flex;gap:8px;padding:14px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #EEE;background:#FAFAFA}
+.filter-row::-webkit-scrollbar{display:none}
+.fbtn{border:1px solid #DDD;background:#fff;color:#555;padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.fbtn.active{border-color:#111;background:#111;color:#fff}
+
+.section-hdr{display:flex;align-items:baseline;gap:10px;padding:18px 20px 8px}
+.section-hdr h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:1px}
+.section-hdr span{font-size:12px;color:#999}
+
+.card-grid{padding:0 14px 4px;display:flex;flex-direction:column;gap:8px}
+.wcard{display:flex;align-items:center;gap:12px;padding:14px 14px;background:#fff;border:1px solid #E5E5E5;border-radius:12px;cursor:pointer;border-left:4px solid #DDD;transition:background .12s,transform .1s;text-align:left}
+.wcard:active{transform:scale(.98);background:#F9F9F9}
+.wcard.circuit{border-left-color:#059669}
+.wcard.sets{border-left-color:#1D6FBF}
+.wcard-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#CCC;flex-shrink:0;min-width:36px;text-align:center}
+.wcard-body{flex:1;min-width:0}
+.wcard-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;line-height:1.1;color:#111}
+.wcard-meta{font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wcard-badge{font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:4px;flex-shrink:0;text-transform:uppercase}
+.circuit .wcard-badge{background:#ECFDF5;color:#059669}
+.sets .wcard-badge{background:#EFF6FF;color:#1D6FBF}
+.wcard-arrow{color:#CCC;font-size:20px;flex-shrink:0}
+.hub-footer{padding:24px 20px 40px;text-align:center;font-size:12px;color:#CCC}
+
+/* ===== WORKOUT DETAIL / TIMER SCREEN ===== */
+.timer-screen{background:#fff}
+
+/* Top bar */
+.tbar{display:flex;align-items:center;gap:12px;padding:14px 16px 12px;border-bottom:2px solid #111;background:#fff;position:sticky;top:0;z-index:10}
+.tbar-back{font-size:22px;cursor:pointer;color:#111;flex-shrink:0;padding:2px 6px;background:none;border:none}
+.tbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbar-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.circuit-badge{background:#ECFDF5;color:#059669;border:1px solid #6EE7B7}
+.sets-badge{background:#EFF6FF;color:#1D6FBF;border:1px solid #93C5FD}
+
+/* Progress bar */
+.prog-bar{height:5px;background:#EEE}
+.prog-fill{height:100%;background:#111;transition:width .5s;width:0%}
+
+/* Home panel (pre-start) */
+.workout-home-panel{flex:1;overflow-y:auto;padding-bottom:100px}
+.panel-meta{padding:16px 20px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.meta-chip{background:#F5F5F5;border:1px solid #E5E5E5;color:#555;font-size:12px;padding:4px 10px;border-radius:6px}
+.instructions-box{margin:14px 20px 0;background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:12px 14px}
+.instructions-box p{font-size:13px;color:#555;line-height:1.6}
+.ex-section-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#D97706;padding:16px 20px 6px}
+.ex-list{padding:0 14px}
+.ex-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EBEBEB;border-radius:10px;padding:11px 13px;margin-bottom:7px}
+.ex-row.rest-row{opacity:.5}
+.rest-icon-sm{width:44px;height:44px;border-radius:7px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ex-row-info{flex:1;min-width:0}
+.ex-row-name{font-weight:600;font-size:15px;line-height:1.2}
+.ex-row-sub{font-size:12px;color:#888;margin-top:2px}
+.ex-row-dur{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;color:#D97706;flex-shrink:0}
+
+/* Fixed bottom start bar */
+.start-bar{position:fixed;bottom:0;left:0;right:0;padding:14px 16px 28px;background:#fff;border-top:1px solid #EEE;display:flex;flex-direction:column;gap:8px;z-index:20}
+.start-btn{width:100%;padding:16px;border:none;border-radius:12px;background:#111;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:.5px;cursor:pointer;transition:transform .1s}
+.start-btn:active{transform:scale(.97)}
+.audio-btn{width:100%;padding:10px;border:1px solid #DDD;border-radius:10px;background:#fff;color:#888;font-size:14px;cursor:pointer;transition:all .2s}
+.audio-btn.on{border-color:#059669;color:#059669;background:#ECFDF5}
+
+/* ===== ACTIVE TIMER PANEL ===== */
+.timer-panel{display:none;flex:1;flex-direction:column;align-items:stretch;padding:14px 14px 0}
+
+/* Current exercise card */
+.curr-card{background:#fff;border:2px solid #111;border-radius:14px;overflow:hidden;margin-bottom:12px}
+.curr-card.rest-card{border-color:#D97706}
+.curr-top{position:relative;height:120px;background:#F5F5F5;display:flex;align-items:center;justify-content:center}
+.curr-top-icon{font-size:52px}
+.phase-pill{position:absolute;top:10px;left:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;padding:3px 10px;border-radius:4px;text-transform:uppercase}
+.work-pill{background:#111;color:#fff}
+.rest-pill{background:#D97706;color:#fff}
+.cool-pill{background:#1D6FBF;color:#fff}
+.set-pill{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.08);color:#333;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;padding:3px 10px;border-radius:4px}
+.curr-body{padding:12px 14px 10px}
+.curr-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;line-height:1.1;color:#111}
+.curr-note{font-size:13px;color:#888;margin-top:3px}
+
+/* Ring timer */
+.ring-wrap{position:relative;width:148px;height:148px;margin:2px auto 8px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#EEE;stroke-width:11}
+.ring-fill{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .5s linear,stroke .3s}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-time-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:44px;line-height:1;color:#111}
+.ring-time-lbl{font-size:11px;color:#999;margin-top:2px;display:block;text-transform:uppercase;letter-spacing:1px}
+
+/* Next strip */
+.next-strip{display:flex;align-items:center;gap:10px;background:#F8F8F8;border:1px solid #EBEBEB;border-radius:10px;padding:10px 13px;margin-bottom:10px}
+.next-icon{width:34px;height:34px;border-radius:6px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.next-lbl{font-size:10px;color:#AAA;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.next-nm{font-weight:600;font-size:14px;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Controls */
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:12px}
+.cbtn{padding:13px 8px;border-radius:11px;border:1px solid #E0E0E0;background:#F5F5F5;color:#333;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.3px;cursor:pointer;transition:transform .1s}
+.cbtn:active{transform:scale(.95)}
+.cbtn-primary{background:#111;color:#fff;border-color:#111}
+.cbtn-danger{color:#DC2626;border-color:#FCA5A5}
+.cbtn-gold{color:#D97706;border-color:#FCD34D}
+.cbtn-full{grid-column:1/-1}
+
+/* Get-ready overlay */
+.gr-overlay{position:fixed;inset:0;background:rgba(255,255,255,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .25s}
+.gr-overlay.show{opacity:1;pointer-events:all}
+.gr-workout-name{font-size:14px;color:#888;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.gr-ex-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:#111;margin-bottom:16px;text-align:center;padding:0 32px}
+.gr-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:110px;color:#111;line-height:1}
+.gr-ready{font-size:13px;color:#888;text-transform:uppercase;letter-spacing:2px;margin-top:6px}
+
+/* Info modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:60}
+.modal-bg.open{display:flex}
+.modal-sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:20px 22px 44px;max-height:72vh;overflow-y:auto}
+.modal-pull{width:36px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 18px}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:#111;margin-bottom:4px}
+.modal-note{font-size:13px;color:#D97706;font-weight:600;margin-bottom:14px}
+.modal-body{font-size:14px;line-height:1.75;color:#444}
+.modal-close{width:100%;margin-top:18px;padding:13px;border:1px solid #DDD;border-radius:10px;background:#F5F5F5;color:#333;font-size:15px;cursor:pointer}
+
+/* Done screen */
+.done-panel{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#fff}
+.done-icon{font-size:64px;margin-bottom:16px}
+.done-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:46px;color:#111;margin-bottom:6px}
+.done-sub{font-size:15px;color:#888;margin-bottom:36px}
+.done-btn{width:100%;padding:16px;border:none;border-radius:12px;background:#111;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;cursor:pointer;margin-bottom:10px}
+.done-btn.outline{background:#fff;color:#111;border:1px solid #DDD}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HUB SCREEN
+═══════════════════════════════════════════ -->
+<div id="hub" class="screen active">
+  <div class="hub-header">
+    <div class="hub-eyebrow">Lifetime Fitness · Personal Training</div>
+    <div class="hub-title">WORKOUT <span>HOME</span></div>
+    <div class="hub-counts">
+      <div class="hub-count-item"><div class="num" style="color:#059669">8</div><div class="lbl">Circuits</div></div>
+      <div class="hub-count-item"><div class="num" style="color:#1D6FBF">9</div><div class="lbl">Set Workouts</div></div>
+      <div class="hub-count-item"><div class="num">17</div><div class="lbl">Total</div></div>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <button class="fbtn active" onclick="filterHub('all',this)">All</button>
+    <button class="fbtn" onclick="filterHub('circuit',this)">Circuits</button>
+    <button class="fbtn" onclick="filterHub('sets',this)">Sets</button>
+    <button class="fbtn" onclick="filterHub('core',this)">Core</button>
+    <button class="fbtn" onclick="filterHub('hinge',this)">Hinge/Pull</button>
+    <button class="fbtn" onclick="filterHub('squat',this)">Squat/Press</button>
+    <button class="fbtn" onclick="filterHub('upper',this)">Upper Body</button>
+    <button class="fbtn" onclick="filterHub('lower',this)">Lower Body</button>
+  </div>
+
+  <div id="hub-cards" style="padding-bottom:32px;overflow-y:auto;flex:1"></div>
+  <div class="hub-footer">All files run locally · Bookmark this page in Chrome for gym access</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     WORKOUT TIMER SCREEN
+═══════════════════════════════════════════ -->
+<div id="timer-screen" class="screen timer-screen">
+  <div class="tbar">
+    <button class="tbar-back" onclick="goBackToHub()">←</button>
+    <div class="tbar-title" id="tbar-title">Workout</div>
+    <div class="tbar-badge" id="tbar-badge"></div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+
+  <!-- PRE-START PANEL -->
+  <div id="home-panel" class="workout-home-panel">
+    <div class="panel-meta" id="panel-meta"></div>
+    <div id="panel-instructions"></div>
+    <div class="ex-section-label" id="panel-section-lbl"></div>
+    <div class="ex-list" id="panel-ex-list"></div>
+  </div>
+
+  <!-- ACTIVE TIMER PANEL -->
+  <div id="timer-panel" class="timer-panel">
+    <div class="curr-card" id="curr-card">
+      <div class="curr-top" id="curr-top">
+        <div class="curr-top-icon" id="curr-icon">💪</div>
+        <div class="phase-pill work-pill" id="phase-pill">WORK</div>
+        <div class="set-pill" id="set-pill" style="display:none"></div>
+      </div>
+      <div class="curr-body">
+        <div class="curr-name" id="curr-name">—</div>
+        <div class="curr-note" id="curr-note"></div>
+      </div>
+    </div>
+
+    <div class="ring-wrap">
+      <svg width="148" height="148" viewBox="0 0 148 148">
+        <circle class="ring-bg" cx="74" cy="74" r="63"/>
+        <circle class="ring-fill" id="ring-fill" cx="74" cy="74" r="63"
+          stroke="#111" stroke-dasharray="395.84" stroke-dashoffset="0"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-time-num" id="ring-num">—</div>
+        <small class="ring-time-lbl" id="ring-lbl">ready</small>
+      </div>
+    </div>
+
+    <div class="next-strip">
+      <div class="next-icon" id="next-icon">→</div>
+      <div style="flex:1;min-width:0">
+        <div class="next-lbl">Up Next</div>
+        <div class="next-nm" id="next-nm">—</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="cbtn" id="pause-btn" onclick="togglePause()">⏸ Pause</button>
+      <button class="cbtn cbtn-primary" onclick="userNext()">Next ▶</button>
+      <button class="cbtn cbtn-gold" onclick="skipRest()">⏭ Skip Rest</button>
+      <button class="cbtn cbtn-danger" onclick="resetTimer()">↺ Reset</button>
+      <button class="cbtn cbtn-full cbtn-gold" onclick="showInfo()">ⓘ Exercise Info</button>
+    </div>
+  </div>
+
+  <!-- DONE PANEL -->
+  <div id="done-panel" class="done-panel">
+    <div class="done-icon">🏆</div>
+    <div class="done-title">COMPLETE!</div>
+    <div class="done-sub" id="done-sub"></div>
+    <button class="done-btn" onclick="resetTimer()">↺ Do It Again</button>
+    <button class="done-btn outline" onclick="goBackToHub()">← All Workouts</button>
+  </div>
+
+  <!-- START BAR (fixed bottom, pre-start) -->
+  <div id="start-bar" class="start-bar">
+    <button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔇 Tap to Enable Audio & Voice</button>
+    <button class="start-btn" onclick="startWorkout()">▶ START WORKOUT</button>
+  </div>
+</div>
+
+<!-- GET READY OVERLAY -->
+<div class="gr-overlay" id="gr-overlay">
+  <div class="gr-workout-name" id="gr-wname"></div>
+  <div class="gr-ex-name" id="gr-exname"></div>
+  <div class="gr-num" id="gr-num">3</div>
+  <div class="gr-ready">Get Ready</div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeInfo()">
+  <div class="modal-sheet">
+    <div class="modal-pull"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-note" id="modal-note"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <button class="modal-close" onclick="closeInfo()">Close</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// WORKOUT DATA
+// ════════════════════════════════════════════════════════════════
+const ALL_WORKOUTS = [
+  {
+    "id": "w01",
+    "filename": "01",
+    "title": "Core / Conditioning (A)",
+    "type": "circuit",
+    "totalRounds": 5,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Body Weight",
+      "Dumbbell",
+      "Mat"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Air Bike",
+        "note": "60 seconds",
+        "duration": 60,
+        "isRest": false,
+        "info": "Pedal at steady high intensity. Drive with both arms and legs. Keep core tight throughout."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 30,
+        "isRest": true
+      },
+      {
+        "name": "Bicycle Crunch",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on back. Bring opposite elbow to opposite knee in a cycling motion. Keep lower back pressed to mat."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Side Bend Crunch",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on side. Crunch upward bringing elbow toward hip. Control movement \u2014 avoid pulling on neck."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Russian Twist",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Sit with knees bent. Hold dumbbell with both hands. Rotate torso side to side. Keep core braced."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Supine Leg Raise",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on back with legs straight. Raise legs to 90\u00b0 then lower slowly without touching floor. Press lower back down."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Hollow Hold (Bent Leg, Arms Overhead)",
+        "note": "40 seconds \u2014 hold position",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on back. Press lower back flat to mat. Raise bent knees and extend arms overhead. Hold hollow position. Breathe steadily."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 60,
+        "isRest": true
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w02",
+    "filename": "02",
+    "title": "Anterior (A)",
+    "type": "circuit",
+    "totalRounds": 3,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Dumbbell",
+      "Medicine Ball"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Skill Run Sled Push (TechnoGym)",
+        "note": "30 lbs \u00d7 100 yards",
+        "duration": 60,
+        "isRest": false,
+        "info": "Load sled with 30 lbs. Drive forward in athletic stance, pushing from hips and legs. Keep back flat and core tight."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Slam Ball Over Shoulder",
+        "note": "1 min \u00b7 30-40 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold slam ball. Squat down, drive through hips and throw ball up and over one shoulder. Alternate shoulders."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "DB Step Up",
+        "note": "1 min \u00b7 15-20 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold dumbbells. Step up onto box leading with one foot. Drive through heel. Alternate legs. Keep torso upright."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Chest Press on Step Up Bench",
+        "note": "1 min \u00b7 15-20 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Lie on bench/step. Press dumbbells from chest to full extension. Control descent. 15-20 lbs each hand."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Ab Dolly Roll Out",
+        "note": "1 min \u00b7 knee tucks",
+        "duration": 60,
+        "isRest": false,
+        "info": "Kneel on ab dolly. Roll forward extending arms while keeping core braced. Pull back tucking knees. Do not let hips sag."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 60,
+        "isRest": true
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w03",
+    "filename": "03",
+    "title": "Anterior (B)",
+    "type": "circuit",
+    "totalRounds": 3,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Kettlebell"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Ski Ergometer",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Grab handles of ski erg. Drive arms down and back in a powerful sweeping motion. Hinge at hips. Maintain steady rhythm."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Kettlebell Suitcase Deadlift",
+        "note": "1 min \u00b7 20-30 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Stand with kettlebell at side. Hinge at hips keeping back straight. Lift by driving through heels. Keep shoulder packed."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Kettlebell Gorilla Row",
+        "note": "1 min \u00b7 15-20 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Place two kettlebells between feet. Hinge forward. Row one while other stays on floor. Alternate sides. Keep hips level."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Kettlebell Squat + Upright Row",
+        "note": "1 min \u00b7 20 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold kettlebell with both hands. Squat to depth, chest up. As you stand, perform upright row raising to chin. 20 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Bird Dog",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "On hands and knees. Extend opposite arm and leg simultaneously. Hold briefly at top. Maintain neutral spine. Alternate sides."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 60,
+        "isRest": true
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w04",
+    "filename": "04",
+    "title": "Posterior (A)",
+    "type": "circuit",
+    "totalRounds": 3,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Kettlebell",
+      "Resistance Band",
+      "Mat"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Rowing Machine (Concept 2 Rower)",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Drive with legs first, then lean back, then pull handles to lower chest. Return in reverse. Maintain steady rhythm."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Kettlebell Swing",
+        "note": "20-30 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hinge at hips \u2014 NOT a squat. Drive hips forward explosively to swing kettlebell to shoulder height. Let it fall back between legs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Resistance Band Pull Apart",
+        "note": "1 min \u00b7 red band",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold resistance band at shoulder width with straight arms. Pull band apart until arms fully extended to sides. Squeeze shoulder blades."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Glute Bridge (Feet Elevated)",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Lie on back. Place feet on bench or step. Drive hips up squeezing glutes. Hold briefly at top. Lower with control."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Superman (Opposite Arm/Leg Alt.)",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Lie face down. Simultaneously raise opposite arm and leg. Hold briefly. Alternate sides. Keep neck neutral \u2014 look at floor."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 60,
+        "isRest": true
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w05",
+    "filename": "05",
+    "title": "Posterior (B)",
+    "type": "circuit",
+    "totalRounds": 5,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Kettlebell",
+      "Dumbbell",
+      "Medicine Ball",
+      "Mat"
+    ],
+    "instructions": "Finish off with a 15 min walk on treadmill.",
+    "exercises": [
+      {
+        "name": "Rowing Machine (Concept 2 Rower)",
+        "note": "2 min \u00b7 300 meters",
+        "duration": 120,
+        "isRest": false,
+        "info": "Target 300 meters in 2 minutes. Drive with legs first, lean back, then pull. Maintain power through the whole stroke."
+      },
+      {
+        "name": "Kettlebell RDL (1 Bell)",
+        "note": "40s \u00b7 14-18 kg",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hinge at hip with kettlebell in one hand. Keep back flat. Lower toward floor while opposite leg extends behind. 14-18 kg."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "DB Alternating Gorilla Row",
+        "note": "40s \u00b7 15 lbs",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hinge forward with dumbbells on floor. Row one dumbbell while the other touches down. Alternate sides. 15 lbs each."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Glute Bridge (Feet Elevated)",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Feet on bench. Drive hips up squeezing glutes. Hold at top briefly. Lower with control."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Medicine Ball Press Sit Up",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on back holding medicine ball at chest. Perform sit-up and press ball overhead at top. Control descent."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 45,
+        "isRest": true
+      }
+    ],
+    "cooldown": {
+      "name": "Treadmill",
+      "note": "speed 3.0 \u00b7 15 minutes",
+      "duration": 900
+    }
+  },
+  {
+    "id": "w06",
+    "filename": "06",
+    "title": "Hinge / Pull (1)",
+    "type": "circuit",
+    "totalRounds": 5,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Kettlebell",
+      "Dumbbell",
+      "Medicine Ball",
+      "Mat"
+    ],
+    "instructions": "Finish off with a 15 min walk on treadmill.",
+    "exercises": [
+      {
+        "name": "Rowing Machine (Concept 2 Rower)",
+        "note": "2 min \u00b7 300 meters",
+        "duration": 120,
+        "isRest": false,
+        "info": "Target 300 meters in 2 minutes. Drive with legs first, lean back, then pull. Maintain power through every stroke."
+      },
+      {
+        "name": "Kettlebell RDL (1 Bell)",
+        "note": "40s \u00b7 14-18 kg",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hinge at hip with kettlebell in one hand. Keep back flat. Lower toward floor while opposite leg extends behind. 14-18 kg."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "DB Alternating Gorilla Row",
+        "note": "40s \u00b7 15 lbs",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hinge forward. Row one dumbbell up while other rests. Alternate with control. 15 lbs each."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Glute Bridge (Feet Elevated)",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Feet on bench. Drive hips up squeezing glutes. Hold at top. Lower with control."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Medicine Ball Press Sit Up",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hold medicine ball at chest. Sit up and press ball overhead. Lower with control."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 45,
+        "isRest": true
+      }
+    ],
+    "cooldown": {
+      "name": "Treadmill",
+      "note": "speed 3.0 \u00b7 15 minutes",
+      "duration": 900
+    }
+  },
+  {
+    "id": "w07",
+    "filename": "07",
+    "title": "Squat / Press (1)",
+    "type": "circuit",
+    "totalRounds": 5,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Bench",
+      "Body Weight",
+      "Box",
+      "Dumbbell",
+      "Mat"
+    ],
+    "instructions": "Complete circuit five times. Finish with 10 minutes on the Rower.",
+    "exercises": [
+      {
+        "name": "Skill Run Sled Push (TechnoGym)",
+        "note": "90s \u00b7 100 yards",
+        "duration": 90,
+        "isRest": false,
+        "info": "Push sled 100 yards. Athletic stance, lean into sled. Drive with legs. Keep back flat. Pace yourself for 90 seconds."
+      },
+      {
+        "name": "Dumbbell Goblet Box Squat",
+        "note": "40s \u00b7 20 lbs",
+        "duration": 40,
+        "isRest": false,
+        "info": "Hold dumbbell at chest. Stand in front of box. Sit back onto box with control. Stand explosively. Keep chest up. 20 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Chest Press",
+        "note": "40s \u00b7 20 lbs",
+        "duration": 40,
+        "isRest": false,
+        "info": "Lie on bench. Press dumbbells from chest to full extension. Control descent. Feet flat on floor. 20 lbs each."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Side/Front Raise",
+        "note": "40s \u00b7 20 lbs",
+        "duration": 40,
+        "isRest": false,
+        "info": "Alternate between lateral raise and front raise. Keep slight bend in elbows. Raise to shoulder height. Control descent."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Bird Dog",
+        "note": "40 seconds",
+        "duration": 40,
+        "isRest": false,
+        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly. Alternate sides. Keep core tight and hips level."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 45,
+        "isRest": true
+      }
+    ],
+    "cooldown": {
+      "name": "Rowing Machine (Concept 2 Rower)",
+      "note": "1000 meters \u00b7 10 minutes",
+      "duration": 600
+    }
+  },
+  {
+    "id": "w08",
+    "filename": "08",
+    "title": "Squat / Press (C)",
+    "type": "circuit",
+    "totalRounds": 3,
+    "badgeLabel": "Interval \u00b7 Circuit",
+    "equipment": [
+      "Body Weight",
+      "Dumbbell",
+      "BOSU",
+      "ViPR"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Air Bike",
+        "note": "1m 30s \u00b7 High Intensity",
+        "duration": 90,
+        "isRest": false,
+        "info": "Push to high intensity. Drive hard with both arms and legs. Maintain consistent effort for full 90 seconds."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Goblet Box Squat",
+        "note": "1 min \u00b7 20-40 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold dumbbell at chest. Squat onto box. Drive through heels to stand. Keep knees tracking over toes. 20-40 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "ViPR Side/Side Skater",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Hold ViPR. Perform lateral skater bounds side to side. Land softly on one foot. Keep core engaged throughout."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Step Up + Shoulder Press",
+        "note": "1 min \u00b7 10-20 lbs",
+        "duration": 60,
+        "isRest": false,
+        "info": "Step up onto box while pressing dumbbells overhead. Control press and descent. Alternate leading legs. 10-20 lbs each."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 20,
+        "isRest": true
+      },
+      {
+        "name": "BOSU Plank (Forearms to Hands)",
+        "note": "1 minute",
+        "duration": 60,
+        "isRest": false,
+        "info": "Start in forearm plank on BOSU flat side down. Transition up to hand plank one arm at a time. Keep hips level."
+      },
+      {
+        "name": "Rest",
+        "note": "End of round",
+        "duration": 90,
+        "isRest": true
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w09",
+    "filename": "09",
+    "title": "Core / Biceps",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Step Mill",
+      "Barbell",
+      "Dumbbell",
+      "Resistance Band",
+      "Cable",
+      "Mat"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Step Mill",
+        "note": "5 sets \u00d7 2 min each \u00b7 60s rest",
+        "sets": 5,
+        "reps": "2 min",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 120,
+        "info": "Set step mill to comfortable pace. Drive through each step. Keep posture upright. 5 sets of 2 minutes."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 90,
+        "isRest": true
+      },
+      {
+        "name": "1-Leg + 2-Leg Lower Core",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "Lie on back. Single leg lower then double leg lower. Keep lower back flat. 3 sets of 30 seconds."
+      },
+      {
+        "name": "Penguins Core",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "Lie on back with knees bent. Crunch up slightly. Reach side to side touching heels. Keep feet flat. 3 sets of 30 seconds."
+      },
+      {
+        "name": "Hollow Hold",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "Press lower back flat. Raise legs and arms holding a dish position. Breathe steadily. 3 sets of 30 seconds."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 90,
+        "isRest": true
+      },
+      {
+        "name": "Fixed Barbell Biceps Curl (Wide)",
+        "note": "3 sets \u00d7 15 reps \u00b7 30-40 lbs \u00b7 45s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Wide grip on fixed barbell. Curl from full extension to shoulder height. Keep elbows at sides. Control descent. 30-40 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Dumbbell Alt. Incline Curl",
+        "note": "3 sets \u00d7 15 reps each arm \u00b7 15-25 lbs \u00b7 45s rest",
+        "sets": 3,
+        "reps": "15 each arm",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit on incline bench. Alternate curling each arm from full extension. Supinate wrist at top. 15-25 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Resistance Band Drag Bicep Curl",
+        "note": "3 sets \u00d7 20 reps \u00b7 red band \u00b7 45s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Stand on band. Curl by dragging hands up along body. Elbows move back. Squeeze at top. Red band."
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w10",
+    "filename": "10",
+    "title": "Core / Triceps",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Treadmill",
+      "Medicine Ball",
+      "EZ Bar",
+      "Cable",
+      "Mat"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Treadmill \u2014 Incline Walk (Woodway)",
+        "note": "10 min \u00b7 incline 7% \u00b7 speed 3.0 \u00b7 90s rest",
+        "sets": 1,
+        "reps": "10 min",
+        "restDuration": 90,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 600,
+        "info": "Set Woodway treadmill to 7% incline, speed 3.0. Walk for 10 minutes. Stay upright \u2014 do not hold rails."
+      },
+      {
+        "name": "Wall Ball Sit Up + Overhead Ext.",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "Lie with feet against wall. Hold medicine ball. Perform sit-up then press ball overhead at top. Lower with control."
+      },
+      {
+        "name": "Medicine Ball Plank Reaches",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "In plank with hands on medicine ball. Reach one hand forward. Alternate sides. Keep hips level and core tight."
+      },
+      {
+        "name": "Medicine Ball Russian Twist",
+        "note": "3 sets \u00d7 30s each \u00b7 45s rest",
+        "sets": 3,
+        "reps": "30s",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": true,
+        "workDuration": 30,
+        "info": "Sit with knees bent. Hold medicine ball. Rotate side to side touching ball to floor. Keep chest up."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "EZ Bar Floor Tricep Extension",
+        "note": "3 sets \u00d7 15 reps \u00b7 30 lbs \u00b7 45s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on floor with EZ bar. Lower bar toward forehead by bending elbows. Press back up. Keep upper arms perpendicular to floor. 30 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Cable Reverse Triceps Ext. (Dual Handles)",
+        "note": "3 sets \u00d7 15 reps \u00b7 15 lbs \u00b7 45s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Face cable. Grip dual handles with underhand grip. Press down extending elbows fully. Control return. 15 lbs."
+      },
+      {
+        "name": "Rest",
+        "note": "",
+        "duration": 60,
+        "isRest": true
+      },
+      {
+        "name": "Cable Staggered Overhead Triceps Ext.",
+        "note": "3 sets \u00d7 15 reps \u00b7 15 lbs \u00b7 45s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 45,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Staggered stance facing away from cable. Extend arms overhead. Keep elbows in tight. Full extension at top. 15 lbs."
+      }
+    ],
+    "cooldown": null
+  },
+  {
+    "id": "w10b",
+    "filename": "10b",
+    "title": "Hinge / Pull (A)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Barbell",
+      "Cable",
+      "Dumbbell",
+      "Machine"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Dumbbell RDL",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Hold dumbbells at thighs. Hinge at hips, lowering weights down legs. Keep back flat. Drive hips forward to return. Feel hamstring stretch."
+      },
+      {
+        "name": "Hoist Seated Leg Curl",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Adjust pad to just above ankles. Curl legs down toward seat. Squeeze hamstrings at bottom. Control the return."
+      },
+      {
+        "name": "Machine Pulldown",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Grip bar wider than shoulder width. Pull bar to upper chest, driving elbows down. Lean back slightly. Control the return."
+      },
+      {
+        "name": "Dumbbell Bent Over Row",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Hinge forward at hips. Row dumbbells to lower rib cage. Drive elbows back. Keep back flat. Control descent."
+      },
+      {
+        "name": "Fixed Barbell Biceps Curl (Narrow)",
+        "note": "3 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Narrow grip on fixed barbell. Curl to shoulder height. Squeeze at top. Slow controlled descent. Keep elbows pinned at sides."
+      },
+      {
+        "name": "Dumbbell Hammer Curl",
+        "note": "3 sets \u00d7 20 reps each arm \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20 each arm",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Neutral grip (palms facing each other). Curl alternately or together. Keep elbows at sides."
+      },
+      {
+        "name": "Hoist Ab Crunch",
+        "note": "5 sets \u00d7 20 reps \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit in ab crunch machine. Crunch forward contracting abs. Hold briefly at full contraction. Slow controlled return."
+      },
+      {
+        "name": "Cable Standing Rotation",
+        "note": "5 sets \u00d7 20 reps \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Stand sideways to cable. Hold handle with both hands. Rotate torso away from cable. Keep hips square. Return with control."
+      }
+    ],
+    "cooldown": {
+      "name": "Treadmill",
+      "note": "15% grade \u00b7 speed 2.0-3.0 \u00b7 15 minutes",
+      "duration": 900
+    }
+  },
+  {
+    "id": "w11",
+    "filename": "11",
+    "title": "Hinge / Pull (B)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Barbell",
+      "Body Weight",
+      "Cable",
+      "Dumbbell",
+      "Machine",
+      "Suspension (TRX)"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Barbell Deadlift",
+        "note": "3 sets \u00d7 10 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Hip-width stance. Grip bar just outside knees. Push floor away, keep bar close to body. Lock out at top. Hinge back down with control."
+      },
+      {
+        "name": "Machine Prone Leg Curl",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie face down. Curl legs toward glutes. Squeeze at top. Slow eccentric return. Don't let hips rise off pad."
+      },
+      {
+        "name": "Glute Bridge Feet Elevated",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Feet on bench. Drive hips up squeezing glutes hard at top. Lower with control. Keep core tight throughout."
+      },
+      {
+        "name": "TRX Row",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lean back holding TRX handles. Pull chest to hands squeezing shoulder blades. The more horizontal your body, the harder it is."
+      },
+      {
+        "name": "Machine Assisted Pull Up",
+        "note": "3 sets \u00d7 8 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "8",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Kneel on assist platform. Pull up driving elbows down. Get chin above bar. Control the descent. Adjust assist weight as needed."
+      },
+      {
+        "name": "Dumbbell Alt. Curl (Rotational)",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Alternate arms. Supinate wrist (rotate palm up) as you curl. Full extension at bottom. Squeeze at top."
+      },
+      {
+        "name": "Dumbbell Alt. Hammer Curl",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Neutral grip alternating curls. Elbows stay at sides. Full range of motion. Targets brachialis and brachioradialis."
+      },
+      {
+        "name": "Machine Abdominal Crunch",
+        "note": "5 sets \u00d7 20 reps \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit in machine. Crunch forward contracting abs fully. Hold briefly. Slow controlled return. Breathe out on contraction."
+      },
+      {
+        "name": "Cable Standing Rotation",
+        "note": "5 sets \u00d7 20 reps \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Stand sideways to cable. Rotate torso away. Keep hips square \u2014 movement is all torso. Return controlled."
+      }
+    ],
+    "cooldown": {
+      "name": "Step Mill (Matrix)",
+      "note": "15 minutes",
+      "duration": 900
+    }
+  },
+  {
+    "id": "w12",
+    "filename": "12",
+    "title": "Squat / Press (A)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Body Weight",
+      "Box",
+      "Cable",
+      "Dumbbell",
+      "Machine",
+      "Mat",
+      "Swiss Ball"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Machine Leg Press",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Place feet shoulder-width on platform. Lower sled until knees at 90\u00b0. Press through heels. Don't lock knees out fully."
+      },
+      {
+        "name": "Dumbbell Goblet Box Squat",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Hold dumbbell at chest. Sit back onto box with control. Stand explosively driving through heels. Keep chest up throughout."
+      },
+      {
+        "name": "Dumbbell Incline Chest Press (45\u00b0)",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Set bench to 45\u00b0. Press from chest to full extension. Lower with control. Focus on upper chest activation."
+      },
+      {
+        "name": "Chair Dumbbell Lateral Raise",
+        "note": "4 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 4,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit in chair. Raise dumbbells to sides to shoulder height. Slight bend in elbows. Control descent. Focus on medial deltoid."
+      },
+      {
+        "name": "Cable Triceps Ext. (Rope)",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Face cable with rope attachment at top. Pull rope down extending elbows. Flare rope ends out at bottom. Full extension. Control return."
+      },
+      {
+        "name": "Cable Forward Lean Triceps Ext. (Rope)",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lean forward from cable. Hold rope overhead. Extend elbows forward/down. Unique angle for long head of triceps."
+      },
+      {
+        "name": "Bird Dog",
+        "note": "5 sets \u00d7 20 reps \u00b7 10 each leg \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20 (10 each leg)",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly. Return with control. Keep hips level. No rotation."
+      },
+      {
+        "name": "Stability Ball Dead Bug (Alt. Arm/Leg)",
+        "note": "5 sets \u00d7 20 reps \u00b7 10 each leg \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20 (10 each leg)",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on back with stability ball between knees and hands. Lower opposite arm and leg while pressing into ball. Alternate sides."
+      }
+    ],
+    "cooldown": {
+      "name": "Air Bike",
+      "note": "90s rest \u00b7 15 minutes",
+      "duration": 900
+    }
+  },
+  {
+    "id": "w13",
+    "filename": "13",
+    "title": "Squat / Press (B)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Body Weight",
+      "BOSU",
+      "Cable",
+      "Dumbbell",
+      "EZ Bar",
+      "Kettlebell",
+      "Machine",
+      "Mat",
+      "Swiss Ball"
+    ],
+    "instructions": "",
+    "exercises": [
+      {
+        "name": "Plate Loaded Leg Press",
+        "note": "3 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "High foot placement for glute focus, lower for quads. Press through heels. Control descent. Don't allow knees to cave."
+      },
+      {
+        "name": "Kettlebell Sumo Squat",
+        "note": "3 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Wide stance, toes out. Hold kettlebell between legs. Sit low into squat. Drive knees out. Squeeze glutes at top."
+      },
+      {
+        "name": "Machine Leg Ext.",
+        "note": "3 sets \u00d7 15 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Adjust pad to ankles. Extend legs fully. Hold briefly at top. Slow eccentric. Don't swing \u2014 isolate the quad."
+      },
+      {
+        "name": "DB Alternating Front Raise",
+        "note": "4 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 4,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Alternate raising each dumbbell to shoulder height. Keep arm straight. Control descent. Targets anterior deltoid."
+      },
+      {
+        "name": "BOSU Dumbbell Chest Press",
+        "note": "3 sets \u00d7 12 reps \u00b7 60s rest",
+        "sets": 3,
+        "reps": "12",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on BOSU dome side. Press dumbbells from chest. Added instability engages core and stabilizers. Control the movement."
+      },
+      {
+        "name": "EZ Bar Floor Tricep Extension",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on floor. Lower EZ bar toward forehead bending elbows. Press back up. Keep upper arms vertical."
+      },
+      {
+        "name": "Cable Forward Lean Overhead Triceps Ext.",
+        "note": "5 sets \u00d7 20 reps \u00b7 60s rest",
+        "sets": 5,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lean forward from high cable. Extend arms overhead. Great for long head triceps. Keep elbows close."
+      },
+      {
+        "name": "Bird Dog",
+        "note": "5 sets \u00d7 20 reps \u00b7 10 each leg \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20 (10 each leg)",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "On hands and knees. Extend opposite arm and leg. Hold briefly at extension. Alternate. Keep hips square."
+      },
+      {
+        "name": "Stability Ball Dead Bug (Alt. Arm/Leg)",
+        "note": "5 sets \u00d7 20 reps \u00b7 10 each leg \u00b7 30s rest",
+        "sets": 5,
+        "reps": "20 (10 each leg)",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on back. Ball between hands and knees. Lower alternating limbs. Press into ball throughout for core activation."
+      }
+    ],
+    "cooldown": {
+      "name": "Precor Elliptical",
+      "note": "60s rest \u00b7 20 minutes",
+      "duration": 1200
+    }
+  },
+  {
+    "id": "w14",
+    "filename": "14",
+    "title": "Upper Body (A)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Barbell",
+      "Cable",
+      "Dumbbell"
+    ],
+    "instructions": "Warm up: 10 min upper body dynamic stretch. 1. Quadruped Shoulder Circles  2. L-Arm Dynamic Stretch  3. Arm Circles  4. Tall Kneeling Arm Raises  5. Tall Kneeling Arm Raises to Thoracic Rotation.",
+    "exercises": [
+      {
+        "name": "Glute Bridge + Dumbbell Pullover",
+        "note": "3 sets \u00d7 10 reps \u00b7 15-20 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie on back with feet flat. Bridge up. Hold dumbbell overhead and pull over from chest while holding bridge. 15-20 lbs."
+      },
+      {
+        "name": "Cable Pulldown (Wide MAG)",
+        "note": "3 sets \u00d7 10 reps \u00b7 40-55 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Wide grip MAG attachment. Pull to upper chest. Drive elbows down and back. Lean slightly back. Squeeze at bottom. 40-55 lbs."
+      },
+      {
+        "name": "Barbell Bench Press",
+        "note": "3 sets \u00d7 15 reps \u00b7 45 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Arch back slightly, feet flat. Lower bar to mid-chest. Press to full extension. Don't bounce off chest. 45 lbs."
+      },
+      {
+        "name": "Landmine 1/2 Kneeling 1-Arm Shoulder Press",
+        "note": "3 sets \u00d7 10 reps each arm \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10 each arm",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Half-kneel facing landmine. Press bar at an angle overhead. Keep core braced. Alternate sides between sets."
+      },
+      {
+        "name": "Fixed Barbell Biceps Curl (Wide)",
+        "note": "5 sets \u00d7 10 reps \u00b7 25 lbs \u00b7 30s rest",
+        "sets": 5,
+        "reps": "10",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Wide grip. Curl with control. Full extension at bottom. Squeeze at top. Short rest \u2014 keep intensity high. 25 lbs."
+      },
+      {
+        "name": "Dual Cable Tricep Extension (Bent Over)",
+        "note": "5 sets \u00d7 10 reps \u00b7 5 lbs \u00b7 30s rest",
+        "sets": 5,
+        "reps": "10",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Face cables at shoulder height. Lean forward. Extend arms back fully. Squeeze triceps at lockout. 5 lbs each side."
+      }
+    ],
+    "cooldown": {
+      "name": "Benchmark: Rower Max Distance in 10 Min",
+      "note": "1 set \u00d7 10 min \u00b7 record distance",
+      "duration": 600
+    }
+  },
+  {
+    "id": "w15",
+    "filename": "15",
+    "title": "Upper Body (B)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Bench",
+      "Dumbbell",
+      "EZ Bar",
+      "Suspension (TRX)"
+    ],
+    "instructions": "Warm up: 10 min upper body dynamic stretch. 1. Quadruped Shoulder Circles  2. L-Arm Dynamic Stretch  3. Arm Circles  4. Tall Kneeling Arm Raises  5. Tall Kneeling Arm Raises to Thoracic Rotation.",
+    "exercises": [
+      {
+        "name": "\"V\" Shoulder Flexion Raises",
+        "note": "3 sets \u00d7 15 reps \u00b7 5-10 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Raise dumbbells in a V shape \u2014 between front raise and lateral raise. Thumbs up. Raise to shoulder height. Targets supraspinatus. 5-10 lbs."
+      },
+      {
+        "name": "Dumbbell Incline Chest Press",
+        "note": "3 sets \u00d7 10 reps \u00b7 15-25 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Set bench to incline. Press from chest to full extension. Control descent. Upper chest focus. 15-25 lbs each hand."
+      },
+      {
+        "name": "Dumbbell Bent Over Rear Delt Fly (Overhand)",
+        "note": "3 sets \u00d7 15 reps \u00b7 5-10 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Hinge forward 45\u00b0. Overhand grip. Fly arms out to sides. Squeeze rear delts. Control return. Don't use momentum. 5-10 lbs."
+      },
+      {
+        "name": "TRX Row",
+        "note": "3 sets \u00d7 10 reps \u00b7 bodyweight \u00b7 60s rest",
+        "sets": 3,
+        "reps": "10",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Bodyweight. Lean back. Pull chest to handles. Drive elbows wide. Squeeze shoulder blades. Walk feet forward to increase difficulty."
+      },
+      {
+        "name": "Dumbbell Alt. Incline Hammer Curl",
+        "note": "5 sets \u00d7 10 reps each arm \u00b7 10-20 lbs \u00b7 30s rest",
+        "sets": 5,
+        "reps": "10 each arm",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Incline bench, neutral grip. Alternately curl. Full extension at bottom. 10-20 lbs. Short rest \u2014 superset feel."
+      },
+      {
+        "name": "EZ Bar Flat Triceps Ext. (Behind Head)",
+        "note": "5 sets \u00d7 10 reps \u00b7 25 lbs \u00b7 30s rest",
+        "sets": 5,
+        "reps": "10",
+        "restDuration": 30,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Lie flat. Hold EZ bar overhead. Lower behind head by bending elbows. Press back up. Keep upper arms vertical. 25 lbs."
+      }
+    ],
+    "cooldown": {
+      "name": "Benchmark: Rower Max Distance in 10 Min",
+      "note": "1 set \u00d7 10 min \u00b7 record distance",
+      "duration": 600
+    }
+  },
+  {
+    "id": "w16",
+    "filename": "16",
+    "title": "Lower Body (A)",
+    "type": "sets",
+    "totalRounds": 1,
+    "badgeLabel": "Sets \u00b7 Regular",
+    "equipment": [
+      "Bench",
+      "Box",
+      "Dumbbell",
+      "Kettlebell",
+      "Machine"
+    ],
+    "instructions": "Dynamic warm up before any exercise: 1. 3-Way Ankle Joint Mobilization  2. Front Lunge Pulses  3. Seated 90/90 Hip IR/ER  4. Glute Bridge  5. Lumbar Kicks  6. Roll & Reach  7. Lateral Lunge.",
+    "exercises": [
+      {
+        "name": "Hip Thrust",
+        "note": "3 sets \u00d7 15 reps \u00b7 bodyweight \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Upper back on bench. Drive hips up squeezing glutes hard at top. Hold briefly. Lower with control. Bodyweight first to warm up."
+      },
+      {
+        "name": "Kettlebell Deadlift (1 Bell)",
+        "note": "3 sets \u00d7 12 reps \u00b7 30-60 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "12",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Stand over kettlebell. Hinge and grip handle. Drive through heels to stand. Keep back flat. Lower with control. 30-60 lbs."
+      },
+      {
+        "name": "Hoist Seated Leg Curl",
+        "note": "3 sets \u00d7 15 reps \u00b7 80-120 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "15",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Adjust pad. Curl down squeezing hamstrings. Pause at bottom. Slow return. 80-120 lbs."
+      },
+      {
+        "name": "Machine Hip Abduction",
+        "note": "3 sets \u00d7 20 reps \u00b7 50-100 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit in machine. Push pads apart using glutes and hip abductors. Control the return. Don't let pads slam together. 50-100 lbs."
+      },
+      {
+        "name": "Dumbbell Seated Calf Raise",
+        "note": "3 sets \u00d7 20 reps \u00b7 10-20 lbs \u00b7 60s rest",
+        "sets": 3,
+        "reps": "20",
+        "restDuration": 60,
+        "isRest": false,
+        "isTimed": false,
+        "info": "Sit on bench. Place dumbbell on thigh. Raise heels as high as possible. Lower fully for full stretch. 10-20 lbs."
+      }
+    ],
+    "cooldown": {
+      "name": "Air Bike",
+      "note": "10 minutes \u00b7 record distance",
+      "duration": 600
+    }
+  }
+];
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let currentWorkout = null;
+let exIdx = 0, setNum = 1, roundNum = 1;
+let timeLeft = 0, totalTime = 0;
+let isPaused = false, inRest = false, inCooldown = false;
+let timerIv = null;
+let audioEnabled = false, audioCtx = null, wakeLock = null;
+let stepsTotal = 0, stepsDone = 0;
+
+// ════════════════════════════════════════════════════════════════
+// HUB
+// ════════════════════════════════════════════════════════════════
+const TAGS = {
+  w01:'circuit core', w02:'circuit anterior', w03:'circuit anterior',
+  w04:'circuit posterior', w05:'circuit posterior', w06:'circuit hinge',
+  w07:'circuit squat', w08:'circuit squat',
+  w09:'sets core upper', w10:'sets core upper', w10b:'sets hinge',
+  w11:'sets hinge', w12:'sets squat', w13:'sets squat',
+  w14:'sets upper', w15:'sets upper', w16:'sets lower'
+};
+
+function buildHub() {
+  const circuits = ALL_WORKOUTS.filter(w => w.type === 'circuit');
+  const sets     = ALL_WORKOUTS.filter(w => w.type === 'sets');
+  const el = document.getElementById('hub-cards');
+  el.innerHTML = '';
+
+  [[circuits,'Circuit Workouts','auto-advancing interval timers'],
+   [sets,'Set Workouts','tap Next when each set is complete']].forEach(([list, label, sub]) => {
+    const hdr = document.createElement('div');
+    hdr.className = 'section-hdr';
+    hdr.innerHTML = `<h2>${label}</h2><span>${list.length} workouts · ${sub}</span>`;
+    el.appendChild(hdr);
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+    list.forEach(w => {
+      const typeClass = w.type === 'circuit' ? 'circuit' : 'sets';
+      const equipStr  = w.equipment.join(', ');
+      const roundStr  = w.type === 'circuit'
+        ? `${w.totalRounds} rounds · ${w.exercises.filter(e=>!e.isRest).length} exercises`
+        : `${w.exercises.filter(e=>!e.isRest).length} exercises`;
+      const card = document.createElement('button');
+      card.className = `wcard ${typeClass}`;
+      card.dataset.tags = TAGS[w.id] || '';
+      card.dataset.wid  = w.id;
+      card.innerHTML = `
+        <div class="wcard-num">${w.filename}</div>
+        <div class="wcard-body">
+          <div class="wcard-title">${w.title}</div>
+          <div class="wcard-meta">${roundStr} · ${equipStr}</div>
+        </div>
+        <div class="wcard-badge">${w.type==='circuit'?'Circuit':'Sets'}</div>
+        <div class="wcard-arrow">›</div>`;
+      card.onclick = () => openWorkout(w.id);
+      grid.appendChild(card);
+    });
+    el.appendChild(grid);
+  });
+}
+
+function filterHub(tag, btn) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.wcard').forEach(c => {
+    c.style.display = (tag==='all' || c.dataset.tags.includes(tag)) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.section-hdr').forEach(hdr => {
+    const grid = hdr.nextElementSibling;
+    if (!grid) return;
+    const visible = [...grid.querySelectorAll('.wcard')].some(c => c.style.display !== 'none');
+    hdr.style.display = visible ? 'flex' : 'none';
+    grid.style.display = visible ? 'flex' : 'none';
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// OPEN WORKOUT
+// ════════════════════════════════════════════════════════════════
+function openWorkout(wid) {
+  currentWorkout = ALL_WORKOUTS.find(w => w.id === wid);
+  if (!currentWorkout) return;
+  resetState();
+  renderHomePanelUI();
+  showScreen('timer-screen');
+}
+
+function renderHomePanelUI() {
+  const w = currentWorkout;
+  // top bar
+  document.getElementById('tbar-title').textContent = w.title;
+  const badge = document.getElementById('tbar-badge');
+  badge.textContent = w.type === 'circuit' ? 'Circuit' : 'Sets';
+  badge.className = 'tbar-badge ' + (w.type==='circuit' ? 'circuit-badge' : 'sets-badge');
+
+  // chips
+  const meta = document.getElementById('panel-meta');
+  meta.innerHTML = '';
+  w.equipment.forEach(e => {
+    const c = document.createElement('div'); c.className = 'meta-chip'; c.textContent = e;
+    meta.appendChild(c);
+  });
+
+  // instructions
+  const instrEl = document.getElementById('panel-instructions');
+  instrEl.innerHTML = w.instructions
+    ? `<div class="instructions-box"><p>${w.instructions}</p></div>` : '';
+
+  // section label
+  document.getElementById('panel-section-lbl').textContent =
+    w.type === 'circuit' ? `Circuit · ${w.totalRounds} Rounds` : 'Exercises';
+
+  // exercise list
+  const list = document.getElementById('panel-ex-list');
+  list.innerHTML = '';
+  w.exercises.forEach(ex => {
+    const row = document.createElement('div');
+    if (ex.isRest) {
+      row.className = 'ex-row rest-row';
+      row.innerHTML = `<div class="rest-icon-sm">✋</div>
+        <div class="ex-row-info"><div class="ex-row-name">Rest</div></div>
+        <div class="ex-row-dur">${ex.duration}s</div>`;
+    } else if (w.type === 'circuit') {
+      const d = ex.duration >= 60 ? (ex.duration/60)+'m' : ex.duration+'s';
+      row.className = 'ex-row';
+      row.innerHTML = `<div class="ex-row-info">
+        <div class="ex-row-name">${ex.name}</div>
+        ${ex.note ? `<div class="ex-row-sub">${ex.note}</div>` : ''}
+      </div><div class="ex-row-dur">${d}</div>`;
+    } else {
+      row.className = 'ex-row';
+      row.innerHTML = `<div class="ex-row-info">
+        <div class="ex-row-name">${ex.name}</div>
+        <div class="ex-row-sub">${ex.note || ''}</div>
+      </div>`;
+    }
+    list.appendChild(row);
+  });
+  if (w.cooldown) {
+    const row = document.createElement('div');
+    row.className = 'ex-row';
+    const dm = Math.round(w.cooldown.duration/60);
+    row.innerHTML = `<div class="ex-row-info">
+      <div class="ex-row-name">🏁 ${w.cooldown.name}</div>
+      <div class="ex-row-sub">${w.cooldown.note}</div>
+    </div><div class="ex-row-dur">${dm}m</div>`;
+    list.appendChild(row);
+  }
+
+  // panels
+  document.getElementById('home-panel').style.display = 'block';
+  document.getElementById('timer-panel').style.display = 'none';
+  document.getElementById('done-panel').style.display = 'none';
+  document.getElementById('start-bar').style.display = 'flex';
+  document.getElementById('prog-fill').style.width = '0%';
+
+  // calc total steps
+  if (w.type === 'circuit') {
+    stepsTotal = w.exercises.length * w.totalRounds + (w.cooldown ? 1 : 0);
+  } else {
+    stepsTotal = 0;
+    w.exercises.forEach(ex => {
+      stepsTotal += ex.isRest ? 1 : (ex.sets || 1);
+    });
+    if (w.cooldown) stepsTotal++;
+  }
+  stepsDone = 0;
+}
+
+// ════════════════════════════════════════════════════════════════
+// AUDIO
+// ════════════════════════════════════════════════════════════════
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  const btn = document.getElementById('audio-btn');
+  if (audioEnabled) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    btn.textContent = '🔊 Audio & Voice On';
+    btn.classList.add('on');
+    beep(880, .1);
+  } else {
+    btn.textContent = '🔇 Tap to Enable Audio & Voice';
+    btn.classList.remove('on');
+  }
+}
+function beep(freq, dur, vol=.3) {
+  if (!audioEnabled || !audioCtx) return;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.value = freq; o.type = 'sine';
+  g.gain.setValueAtTime(vol, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + dur);
+  o.start(); o.stop(audioCtx.currentTime + dur);
+}
+function tripleBeep() { beep(880,.1); setTimeout(()=>beep(880,.1),150); setTimeout(()=>beep(1320,.2),300); }
+// ── Voice selection: soft British female ──────────────────────
+let preferredVoice = null;
+
+function loadVoice() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return;
+  // Priority list — British English females first, then any English female
+  const priorities = [
+    v => v.lang==='en-GB' && /female|woman|girl|fiona|kate|serena|emily|karen|moira/i.test(v.name),
+    v => v.lang==='en-GB',
+    v => v.lang.startsWith('en') && /female|woman|girl|fiona|kate|serena|emily|karen/i.test(v.name),
+    v => /samantha|victoria|karen|moira|fiona|serena|emily/i.test(v.name),
+    v => v.lang.startsWith('en'),
+  ];
+  for (const test of priorities) {
+    const match = voices.find(test);
+    if (match) { preferredVoice = match; break; }
+  }
+}
+
+// Voices load asynchronously on many browsers
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = loadVoice;
+}
+setTimeout(loadVoice, 500);
+
+function speak(txt) {
+  if (!audioEnabled || !window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(txt);
+  if (!preferredVoice) loadVoice();
+  if (preferredVoice) u.voice = preferredVoice;
+  u.lang = 'en-GB';
+  u.rate = 0.88;   // slightly slower = softer, clearer
+  u.pitch = 1.05;  // slightly higher = more feminine
+  u.volume = 1.0;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+async function getWakeLock() {
+  if ('wakeLock' in navigator) try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+}
+function dropWakeLock() { if (wakeLock) { wakeLock.release(); wakeLock = null; } }
+
+// ════════════════════════════════════════════════════════════════
+// TIMER CORE
+// ════════════════════════════════════════════════════════════════
+function startWorkout() {
+  getWakeLock();
+  resetState();
+  document.getElementById('home-panel').style.display = 'none';
+  document.getElementById('start-bar').style.display = 'none';
+  document.getElementById('timer-panel').style.display = 'flex';
+  doGetReady();
+}
+
+function resetState() {
+  clearInterval(timerIv); timerIv = null;
+  exIdx = 0; setNum = 1; roundNum = 1;
+  timeLeft = 0; totalTime = 0;
+  isPaused = false; inRest = false; inCooldown = false;
+  stepsDone = 0;
+}
+
+function doGetReady(skipOverlay) {
+  const w = currentWorkout;
+  const ex = w.exercises[exIdx];
+  if (!ex) { w.cooldown ? startCooldown() : finish(); return; }
+  if (skipOverlay) { beginStep(); return; }
+  const ov = document.getElementById('gr-overlay');
+  document.getElementById('gr-wname').textContent = w.title;
+  document.getElementById('gr-exname').textContent = ex.isRest ? 'Rest' : ex.name;
+  ov.classList.add('show');
+  let c = 3;
+  document.getElementById('gr-num').textContent = c;
+  beep(660, .1);
+  const iv = setInterval(() => {
+    c--;
+    if (c > 0) { document.getElementById('gr-num').textContent = c; beep(660,.1); }
+    else { clearInterval(iv); ov.classList.remove('show'); beginStep(); }
+  }, 1000);
+}
+
+function beginStep() {
+  const w = currentWorkout;
+  const ex = w.exercises[exIdx];
+  if (!ex) { w.cooldown ? startCooldown() : finish(); return; }
+  inRest = false;
+  updateCurrentUI(ex);
+  isPaused = false;
+  updatePauseBtn();
+
+  if (w.type === 'circuit') {
+    timeLeft = ex.duration; totalTime = ex.duration;
+    if (ex.isRest) speak('Rest');
+    else { speak(ex.name); tripleBeep(); }
+    runCountdown(() => { stepDone(); advanceCircuit(); });
+  } else {
+    // Sets
+    if (ex.isRest) {
+      timeLeft = ex.duration; totalTime = ex.duration;
+      speak('Rest');
+      runCountdown(() => { stepDone(); exIdx++; doGetReady(true); });
+    } else if (ex.isTimed) {
+      timeLeft = ex.workDuration; totalTime = ex.workDuration;
+      speak(`Set ${setNum} of ${ex.sets}. ${ex.name}`);
+      tripleBeep();
+      runCountdown(() => startSetRest(ex));
+    } else {
+      // rep-based — show reps, wait for tap
+      timeLeft = 0; totalTime = 0;
+      document.getElementById('ring-num').textContent = ex.reps;
+      document.getElementById('ring-lbl').textContent = 'reps · tap NEXT';
+      document.getElementById('ring-fill').setAttribute('stroke-dashoffset','0');
+      speak(`Set ${setNum} of ${ex.sets}. ${ex.name}. ${ex.reps} reps.`);
+      tripleBeep();
+    }
+  }
+}
+
+function runCountdown(onDone) {
+  clearInterval(timerIv);
+  timerIv = setInterval(() => {
+    if (isPaused) return;
+    updateRing();
+    const half = Math.floor(totalTime/2);
+    if (timeLeft === half && totalTime > 10) {
+      const ex = currentWorkout.exercises[exIdx];
+      if (ex && !ex.isRest && !inRest) speak('Halfway');
+      else beep(440, .1);
+    }
+    if (timeLeft <= 5 && timeLeft > 0) {
+      beep(880, .08);
+      if (timeLeft === 3) announceNext();
+    }
+    timeLeft--;
+    if (timeLeft < 0) { clearInterval(timerIv); onDone(); }
+  }, 1000);
+}
+
+function startSetRest(ex) {
+  if (setNum >= ex.sets) { stepDone(); setNum = 1; exIdx++; doGetReady(true); return; }
+  inRest = true;
+  timeLeft = ex.restDuration; totalTime = ex.restDuration;
+  updateRestUI(`Rest · Set ${setNum+1} of ${ex.sets} next`);
+  speak(`Rest. Next: set ${setNum+1} of ${ex.sets}.`);
+  runCountdown(() => { inRest = false; setNum++; beginStep(); });
+}
+
+function advanceCircuit() {
+  const w = currentWorkout;
+  exIdx++;
+  if (exIdx >= w.exercises.length) {
+    if (roundNum < w.totalRounds) {
+      roundNum++; exIdx = 0;
+      speak(`Round ${roundNum}`);
+      updateRoundBadge();
+      doGetReady(true);
+    } else {
+      w.cooldown ? startCooldown() : finish();
+    }
+  } else {
+    doGetReady(true);
+  }
+}
+
+function stepDone() { stepsDone++; updateProgress(); }
+
+function startCooldown() {
+  inCooldown = true;
+  const cd = currentWorkout.cooldown;
+  document.getElementById('curr-name').textContent = cd.name;
+  document.getElementById('curr-note').textContent = cd.note;
+  document.getElementById('curr-card').className = 'curr-card';
+  document.getElementById('curr-icon').textContent = '🏁';
+  document.getElementById('phase-pill').textContent = 'COOL DOWN';
+  document.getElementById('phase-pill').className = 'phase-pill cool-pill';
+  document.getElementById('set-pill').style.display = 'none';
+  document.getElementById('ring-fill').setAttribute('stroke','#1D6FBF');
+  document.getElementById('next-nm').textContent = 'Workout Complete 🏆';
+  document.getElementById('next-icon').textContent = '🏆';
+  document.getElementById('tbar-badge').textContent = 'Cool Down';
+  timeLeft = cd.duration; totalTime = cd.duration;
+  speak(`Cool down. ${cd.name}. ${cd.note}`);
+  runCountdown(finish);
+}
+
+function finish() {
+  clearInterval(timerIv); dropWakeLock();
+  speak('Workout complete! Great work!');
+  tripleBeep(); setTimeout(tripleBeep, 600);
+  document.getElementById('timer-panel').style.display = 'none';
+  document.getElementById('done-panel').style.display = 'flex';
+  document.getElementById('done-sub').textContent = currentWorkout.title;
+  document.getElementById('prog-fill').style.width = '100%';
+}
+
+// ─── user controls ───────────────────────────────────────────
+function userNext() {
+  clearInterval(timerIv);
+  const w = currentWorkout;
+  const ex = w.exercises[exIdx];
+  if (inCooldown) { finish(); return; }
+  if (!ex) { w.cooldown ? startCooldown() : finish(); return; }
+
+  if (w.type === 'circuit') {
+    stepDone(); advanceCircuit();
+  } else {
+    if (ex.isRest) { stepDone(); exIdx++; doGetReady(true); }
+    else if (inRest) { inRest = false; setNum++; beginStep(); }
+    else {
+      // rep-based: user done with set
+      if (setNum < ex.sets) { startSetRest(ex); }
+      else { stepDone(); setNum = 1; exIdx++; doGetReady(true); }
+    }
+  }
+}
+
+function skipRest() {
+  const w = currentWorkout; const ex = w.exercises[exIdx];
+  if (w.type === 'circuit' && ex && ex.isRest) { clearInterval(timerIv); stepDone(); advanceCircuit(); }
+  else if (inRest) { clearInterval(timerIv); inRest = false; setNum++; beginStep(); }
+}
+
+function togglePause() {
+  isPaused = !isPaused; updatePauseBtn();
+}
+function updatePauseBtn() {
+  document.getElementById('pause-btn').textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+}
+
+function resetTimer() {
+  clearInterval(timerIv); dropWakeLock();
+  resetState();
+  document.getElementById('timer-panel').style.display = 'none';
+  document.getElementById('done-panel').style.display = 'none';
+  renderHomePanelUI();
+}
+
+function goBackToHub() {
+  clearInterval(timerIv); dropWakeLock(); resetState();
+  showScreen('hub');
+}
+
+// ─── announcement ─────────────────────────────────────────────
+function announceNext() {
+  const w = currentWorkout;
+  if (w.type === 'circuit') {
+    const ni = exIdx + 1;
+    if (ni < w.exercises.length) {
+      const n = w.exercises[ni];
+      speak('Coming up: ' + (n.isRest ? 'Rest' : n.name));
+    } else if (roundNum < w.totalRounds) {
+      speak('Coming up: Round ' + (roundNum+1));
+    }
+  } else if (inRest) {
+    const ex = w.exercises[exIdx];
+    if (ex) speak(`Coming up: Set ${setNum+1} of ${ex.sets}. ${ex.name}`);
+  }
+}
+
+// ─── UI updates ───────────────────────────────────────────────
+function updateCurrentUI(ex) {
+  const card = document.getElementById('curr-card');
+  const pill = document.getElementById('phase-pill');
+  const setPill = document.getElementById('set-pill');
+  document.getElementById('curr-name').textContent = ex.isRest ? 'Rest' : ex.name;
+  document.getElementById('curr-note').textContent = ex.note || '';
+
+  if (ex.isRest) {
+    card.className = 'curr-card rest-card';
+    pill.textContent = 'REST'; pill.className = 'phase-pill rest-pill';
+    document.getElementById('curr-icon').textContent = '✋';
+    document.getElementById('ring-fill').setAttribute('stroke','#D97706');
+    setPill.style.display = 'none';
+    document.getElementById('ring-lbl').textContent = 'rest';
+  } else {
+    card.className = 'curr-card';
+    pill.textContent = 'WORK'; pill.className = 'phase-pill work-pill';
+    document.getElementById('curr-icon').textContent = '💪';
+    document.getElementById('ring-fill').setAttribute('stroke','#111');
+    document.getElementById('ring-lbl').textContent = 'seconds';
+    if (currentWorkout.type === 'sets' && ex.sets > 1) {
+      setPill.style.display = 'block';
+      setPill.textContent = `Set ${setNum} / ${ex.sets}`;
+    } else { setPill.style.display = 'none'; }
+  }
+  updateNextStrip();
+  updateRoundBadge();
+}
+
+function updateRestUI(noteText) {
+  const card = document.getElementById('curr-card');
+  card.className = 'curr-card rest-card';
+  document.getElementById('phase-pill').textContent = 'REST';
+  document.getElementById('phase-pill').className = 'phase-pill rest-pill';
+  document.getElementById('curr-icon').textContent = '✋';
+  document.getElementById('ring-fill').setAttribute('stroke','#D97706');
+  document.getElementById('ring-lbl').textContent = 'rest';
+  document.getElementById('curr-name').textContent = 'Rest';
+  document.getElementById('curr-note').textContent = noteText || '';
+  const ex = currentWorkout.exercises[exIdx];
+  const sp = document.getElementById('set-pill');
+  if (ex && ex.sets > 1) { sp.style.display='block'; sp.textContent=`Set ${setNum} / ${ex.sets}`; }
+  else { sp.style.display='none'; }
+  document.getElementById('next-nm').textContent = `Set ${setNum+1} of ${ex ? ex.sets : '?'} — ${ex ? ex.name : ''}`;
+  document.getElementById('next-icon').textContent = '💪';
+}
+
+function updateNextStrip() {
+  const w = currentWorkout;
+  const ni = document.getElementById('next-icon');
+  const nn = document.getElementById('next-nm');
+  if (inRest) { ni.textContent='💪'; nn.textContent=`Set ${setNum+1} — ${w.exercises[exIdx]?.name||''}`; return; }
+  const nIdx = exIdx + 1;
+  if (w.type === 'sets' && !w.exercises[exIdx]?.isRest && w.exercises[exIdx]?.sets > setNum) {
+    ni.textContent='⏱'; nn.textContent=`Rest → Set ${setNum+1} of ${w.exercises[exIdx].sets}`; return;
+  }
+  if (nIdx < w.exercises.length) {
+    const nx = w.exercises[nIdx];
+    ni.textContent = nx.isRest ? '✋' : '💪';
+    nn.textContent = nx.isRest ? 'Rest' : nx.name;
+  } else if (w.type==='circuit' && roundNum < w.totalRounds) {
+    ni.textContent='🔄'; nn.textContent=`Round ${roundNum+1}`;
+  } else if (w.cooldown) {
+    ni.textContent='🏁'; nn.textContent=w.cooldown.name;
+  } else {
+    ni.textContent='🏆'; nn.textContent='Workout Complete!';
+  }
+}
+
+function updateRoundBadge() {
+  const w = currentWorkout;
+  const badge = document.getElementById('tbar-badge');
+  if (w.type==='circuit') {
+    badge.textContent = `Round ${roundNum} of ${w.totalRounds}`;
+  } else {
+    const ex = w.exercises[exIdx];
+    if (ex && !ex.isRest && ex.sets > 1) badge.textContent = `Set ${setNum} of ${ex.sets}`;
+    else badge.textContent = w.type==='sets' ? 'Sets' : 'Circuit';
+  }
+}
+
+function updateRing() {
+  const circ = 2 * Math.PI * 63;
+  const pct = totalTime > 0 ? timeLeft / totalTime : 0;
+  document.getElementById('ring-fill').setAttribute('stroke-dashoffset', circ*(1-pct));
+  document.getElementById('ring-num').textContent = timeLeft >= 60
+    ? Math.floor(timeLeft/60)+':'+String(timeLeft%60).padStart(2,'0')
+    : timeLeft+'s';
+}
+
+function updateProgress() {
+  document.getElementById('prog-fill').style.width = Math.min(100, (stepsDone/stepsTotal)*100)+'%';
+}
+
+// ─── info modal ───────────────────────────────────────────────
+function showInfo() {
+  const ex = currentWorkout?.exercises[exIdx];
+  if (!ex || ex.isRest) return;
+  document.getElementById('modal-title').textContent = ex.name;
+  document.getElementById('modal-note').textContent = ex.note || '';
+  document.getElementById('modal-body').textContent = ex.info || 'Focus on controlled movement and proper form throughout.';
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeInfo() { document.getElementById('modal-bg').classList.remove('open'); }
+
+// ─── screen switching ─────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+buildHub();
+</script>
+</body>
+</html>
