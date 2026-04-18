@@ -168,6 +168,20 @@ button,a{font-family:'Barlow',sans-serif}
 .done-sub{font-size:15px;color:#888;margin-bottom:36px}
 .done-btn{width:100%;padding:16px;border:none;border-radius:12px;background:#111;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;cursor:pointer;margin-bottom:10px}
 .done-btn.outline{background:#fff;color:#111;border:1px solid #DDD}
+
+/* ── Swipeable exercise info panel ── */
+.info-panel{position:relative;overflow:hidden;background:#F8F9FA;border-bottom:1px solid #EBEBEB;min-height:110px;touch-action:pan-y}
+.info-slides{display:flex;transition:transform .3s ease;height:100%;will-change:transform}
+.info-slide{min-width:100%;padding:12px 14px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start}
+.info-slide-text{font-size:14px;line-height:1.65;color:#444}
+.info-slide-instructions{font-size:13px;line-height:1.6;color:#333}
+.info-slide-instructions li{margin-bottom:6px;padding-left:4px}
+.info-slide-img{display:flex;align-items:center;justify-content:center;min-height:110px}
+.info-slide-img img{max-height:150px;max-width:100%;border-radius:8px;object-fit:contain}
+.info-dots{display:flex;justify-content:center;gap:5px;padding:5px 0 3px;background:#F8F9FA;border-bottom:1px solid #EBEBEB}
+.info-dot{width:6px;height:6px;border-radius:50%;background:#DDD;transition:background .2s}
+.info-dot.active{background:#111}
+.info-loading{font-size:12px;color:#AAA;padding:8px 14px;font-style:italic}
 </style>
 </head>
 <body>
@@ -223,11 +237,15 @@ button,a{font-family:'Barlow',sans-serif}
   <!-- ACTIVE TIMER PANEL -->
   <div id="timer-panel" class="timer-panel">
     <div class="curr-card" id="curr-card">
-      <div class="curr-top" id="curr-top">
-        <div class="curr-info-text" id="curr-info-text">—</div>
-        <div class="phase-pill work-pill" id="phase-pill">WORK</div>
-        <div class="set-pill" id="set-pill" style="display:none"></div>
+      <div class="info-panel" id="info-panel">
+        <div class="info-slides" id="info-slides">
+          <div class="info-slide"><div class="info-slide-text" id="curr-info-text">—</div></div>
+        </div>
       </div>
+      <div class="info-dots" id="info-dots"></div>
+      <!-- keep hidden phase/set pills for JS compatibility -->
+      <div style="display:none" id="phase-pill"></div>
+      <div style="display:none" id="set-pill"></div>
       <div class="curr-body">
         <div class="curr-name" id="curr-name">—</div>
         <div class="curr-note" id="curr-note"></div>
@@ -1873,6 +1891,131 @@ const ALL_WORKOUTS = [
     }
   }
 ];
+
+// ════════════════════════════════════════════════════════════════
+// EXERCISE DB — fetch once, cache, match by name
+// ════════════════════════════════════════════════════════════════
+const EXERCISE_DB_URL = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json';
+const IMG_BASE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
+let exerciseDB = null;
+let dbLoading = false;
+let dbCallbacks = [];
+
+function loadExerciseDB(cb) {
+  if (exerciseDB) { cb(exerciseDB); return; }
+  dbCallbacks.push(cb);
+  if (dbLoading) return;
+  dbLoading = true;
+  fetch(EXERCISE_DB_URL)
+    .then(r => r.json())
+    .then(data => {
+      exerciseDB = data;
+      dbCallbacks.forEach(fn => fn(data));
+      dbCallbacks = [];
+    })
+    .catch(() => {
+      dbCallbacks.forEach(fn => fn(null));
+      dbCallbacks = [];
+    });
+}
+
+function findExercise(name) {
+  if (!exerciseDB) return null;
+  const clean = s => s.toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
+  const target = clean(name);
+  // Exact match first
+  let match = exerciseDB.find(e => clean(e.name) === target);
+  if (match) return match;
+  // Partial match — target words contained in DB name or vice versa
+  const tWords = target.split(' ').filter(w => w.length > 3);
+  match = exerciseDB.find(e => {
+    const n = clean(e.name);
+    return tWords.length >= 2 && tWords.filter(w => n.includes(w)).length >= Math.ceil(tWords.length * 0.6);
+  });
+  return match || null;
+}
+
+// ── Swipe / slide logic ───────────────────────────────────────
+let slideIndex = 0;
+let slideCount = 0;
+let touchStartX = 0;
+
+function buildInfoSlides(ex) {
+  const slidesEl = document.getElementById('info-slides');
+  const dotsEl = document.getElementById('info-dots');
+  slideIndex = 0;
+
+  // Always slide 0: coaching text
+  const slides = [];
+  slides.push(`<div class="info-slide"><div class="info-slide-text">${ex.info || 'Focus on controlled movement and proper form throughout.'}</div></div>`);
+
+  // Show loading placeholder for DB slides
+  slidesEl.innerHTML = slides[0] + '<div class="info-slide"><div class="info-loading">Loading exercise details...</div></div>';
+  slideCount = 2;
+  renderDots();
+
+  // Fetch DB and build remaining slides
+  loadExerciseDB(db => {
+    const dbEx = findExercise(ex.name);
+    const finalSlides = [slides[0]];
+
+    if (dbEx) {
+      // Slide 1: Step-by-step instructions
+      if (dbEx.instructions && dbEx.instructions.length) {
+        const steps = dbEx.instructions.map((s,i) => `<li><strong>Step ${i+1}:</strong> ${s}</li>`).join('');
+        finalSlides.push(`<div class="info-slide"><ol class="info-slide-instructions">${steps}</ol></div>`);
+      }
+      // Slides 2+: Images
+      if (dbEx.images && dbEx.images.length) {
+        dbEx.images.forEach(img => {
+          finalSlides.push(`<div class="info-slide info-slide-img"><img src="${IMG_BASE}${img}" alt="${dbEx.name}" loading="lazy"/></div>`);
+        });
+      }
+    } else {
+      finalSlides.push(`<div class="info-slide"><div class="info-loading">No additional details found for this exercise.</div></div>`);
+    }
+
+    slidesEl.innerHTML = finalSlides.join('');
+    slideCount = finalSlides.length;
+    slideIndex = 0;
+    applySlide();
+    renderDots();
+  });
+}
+
+function applySlide() {
+  const slides = document.getElementById('info-slides');
+  if (slides) slides.style.transform = `translateX(-${slideIndex * 100}%)`;
+  renderDots();
+}
+
+function renderDots() {
+  const dotsEl = document.getElementById('info-dots');
+  if (!dotsEl) return;
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < slideCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'info-dot' + (i === slideIndex ? ' active' : '');
+    d.onclick = () => { slideIndex = i; applySlide(); };
+    dotsEl.appendChild(d);
+  }
+}
+
+// Touch swipe support
+function initSwipe() {
+  const panel = document.getElementById('info-panel');
+  if (!panel) return;
+  panel.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+  panel.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0 && slideIndex < slideCount-1) slideIndex++;
+      else if (dx > 0 && slideIndex > 0) slideIndex--;
+      applySlide();
+    }
+  }, {passive:true});
+}
+
 // ════════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════════
@@ -2118,6 +2261,7 @@ function dropWakeLock() { if (wakeLock) { wakeLock.release(); wakeLock = null; }
 // ════════════════════════════════════════════════════════════════
 function startWorkout() {
   getWakeLock();
+  initSwipe();
   resetState();
   document.getElementById('home-panel').style.display = 'none';
   document.getElementById('start-bar').style.display = 'none';
@@ -2243,7 +2387,8 @@ function startCooldown() {
   document.getElementById('curr-name').textContent = cd.name;
   document.getElementById('curr-note').textContent = cd.note;
   document.getElementById('curr-card').className = 'curr-card';
-  document.getElementById('curr-info-text').textContent = 'Great work completing the main workout! Use this time to bring your heart rate down gradually. Keep moving at a comfortable pace.';
+  document.getElementById('info-slides').innerHTML = '<div class="info-slide"><div class="info-slide-text">Great work completing the main workout! Use this time to bring your heart rate down gradually. Keep moving at a comfortable pace.</div></div>';
+  slideCount=1; slideIndex=0; applySlide(); renderDots();
   document.getElementById('phase-pill').textContent = 'COOL DOWN';
   document.getElementById('phase-pill').className = 'phase-pill cool-pill';
   document.getElementById('set-pill').style.display = 'none';
@@ -2342,14 +2487,15 @@ function updateCurrentUI(ex) {
   if (ex.isRest) {
     card.className = 'curr-card rest-card';
     pill.textContent = 'REST'; pill.className = 'phase-pill rest-pill';
-    document.getElementById('curr-info-text').textContent = 'Rest and recover. Focus on controlled breathing — inhale through nose, exhale through mouth. Prepare mentally for the next exercise.';
+    document.getElementById('info-slides').innerHTML = '<div class="info-slide"><div class="info-slide-text">Rest and recover. Focus on controlled breathing — inhale through nose, exhale through mouth. Prepare mentally for the next exercise.</div></div>';
+    slideCount=1; slideIndex=0; applySlide(); renderDots();
     document.getElementById('ring-fill').setAttribute('stroke','#D97706');
     setPill.style.display = 'none';
     document.getElementById('ring-lbl').textContent = 'rest';
   } else {
     card.className = 'curr-card';
     pill.textContent = 'WORK'; pill.className = 'phase-pill work-pill';
-    document.getElementById('curr-info-text').textContent = ex.info || 'Focus on controlled movement and proper form throughout.';
+    buildInfoSlides(ex);
     document.getElementById('ring-fill').setAttribute('stroke','#111');
     document.getElementById('ring-lbl').textContent = 'seconds';
     setPill.style.display = 'none'; // pill hidden, using set-progress instead
@@ -2369,7 +2515,8 @@ function updateRestUI(noteText) {
   card.className = 'curr-card rest-card';
   document.getElementById('phase-pill').textContent = 'REST';
   document.getElementById('phase-pill').className = 'phase-pill rest-pill';
-  document.getElementById('curr-info-text').textContent = 'Rest and recover. Breathe steadily. Shake out tension in your muscles and prepare for the next set.';
+  document.getElementById('info-slides').innerHTML = '<div class="info-slide"><div class="info-slide-text">Rest and recover. Breathe steadily. Shake out tension in your muscles and prepare for the next set.</div></div>';
+  slideCount=1; slideIndex=0; applySlide(); renderDots();
   document.getElementById('ring-fill').setAttribute('stroke','#D97706');
   document.getElementById('ring-lbl').textContent = 'rest';
   document.getElementById('curr-name').textContent = 'Rest';
